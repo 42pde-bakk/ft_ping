@@ -13,6 +13,6 @@
 #include <arpa/inet.h>
 
 void    print_sockaddr(int fd, struct sockaddr* res, const char* prefix);
-void    print_addrinfo(int fd, struct addrinfo ai, const char* prefix);
+void    print_addrinfo(int fd, struct addrinfo* ai, const char* prefix);
 
 #endif //FT_PING_PRINT_ADDR_H

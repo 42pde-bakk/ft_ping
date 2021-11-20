@@ -1,0 +1,3 @@
+/Users/pde-bakk/CLionProjects/ft_ping/cmake-build/CMakeFiles/simple_example.dir
+/Users/pde-bakk/CLionProjects/ft_ping/cmake-build/CMakeFiles/edit_cache.dir
+/Users/pde-bakk/CLionProjects/ft_ping/cmake-build/CMakeFiles/rebuild_cache.dir

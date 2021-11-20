@@ -8,45 +8,77 @@
 #include <string.h>
 #include <stdlib.h>
 #include <arpa/inet.h>
+#include "ft_ping.h"
 #include "print_addr.h"
 
-static struct addrinfo*  get_addrinfo(const char* hostname) {
-    struct addrinfo hints, *result;
+t_signals g_signals;
 
-    memset(&hints, 0, sizeof(struct addrinfo));
-    hints.ai_family = AF_INET;
-    hints.ai_socktype = SOCK_DGRAM;
-    hints.ai_flags = 0;
-    hints.ai_protocol = IPPROTO_UDP;
-    hints.ai_canonname = NULL;
-    hints.ai_addr = NULL;
-    hints.ai_next = NULL;
+static int wide_receiver(int socketfd, struct addrinfo* addrInfo) {
+	struct msghdr   msg;
+	struct iovec    iov;
+    ssize_t         size;
+    char            recvbuf[1500] = {0};
+	char            controlbuf[BUFSIZ] = {0};
+	int             s;
+    struct timeval  tv_start,
+                    tv_end;
 
-    int er = getaddrinfo(hostname, "http", &hints, &result);
-    if (er != 0) {
-        fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(er));
-        exit(EXIT_FAILURE);
+	memset(&msg, 0, sizeof(msg));
+	memset(&iov, 0, sizeof(iov));
+
+	iov.iov_base = recvbuf;
+	iov.iov_len = sizeof(recvbuf);
+
+    msg.msg_name = addrInfo->ai_addr;
+    msg.msg_namelen = addrInfo->ai_addrlen;
+    iov.iov_base = recvbuf;
+    //replace sizeof(data) by MAX
+    iov.iov_len = iov.iov_len;
+    msg.msg_iov = &iov;
+    msg.msg_iovlen = 1;
+    msg.msg_control = controlbuf;
+    msg.msg_controllen = sizeof(controlbuf);
+    msg.msg_flags = 0;
+
+    s = recvmsg(socketfd, &msg, 0);
+    if (s < 0) {
+        perror("recvmsg");
+        s = 0;
+    } else {
+        printf("no perror\n");
     }
-    return (result);
+    return s;
 }
-
-static void connecttosocket(struct addrinfo* result) {
-    int sock = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
-    if (sock == -1) {
-        perror("socket");
-        exit(EXIT_FAILURE);
-    }
-    char payload[16] = {0};
-
-    if (sendto(sock, payload, 16, 0, result->ai_addr, result->ai_addrlen) == -1)
-        perror("sendto");
-}
-
 
 int main(int argc, char** argv) {
-    struct addrinfo* addrInfo = get_addrinfo("tracker.openbittorrent.com");
-    connecttosocket(addrInfo);
+    (void)argc;
+    (void)argv;
+    char addrstr[INET6_ADDRSTRLEN];
+    t_ping ping;
+    memset(&ping, 0, sizeof(t_ping));
+    char* hostname = "google.com";
+//	int sock = connecttosocket(addrInfo);
+//    int s = wide_receiver(sock, addrInfo);
+
+    // parsing
+
+    // set up signal handler
+
+    struct addrinfo* addrInfo = get_addrinfo("8.8.8.8");
+    print_addrinfo(1, addrInfo, "");
+//    inet_ntop(AF_INET, (void*)&ping.addr->sin_addr, addrstr, INET6_ADDRSTRLEN);
+    printf("after\n");
+    print_addrinfo(1, addrInfo, "");
+    int socketFd = create_socket(addrInfo);
+
+//    print_addrinfo(1, addrInfo, "");
+    // print initial thingy
+    printf("PING %s ..: %d data bytes\n", hostname, 56);
+
+    // while true
+        // send packet
+        // recv
 
 
-    return (0);
+	return (0);
 }
