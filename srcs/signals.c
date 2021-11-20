@@ -5,9 +5,11 @@
 #include "ft_ping.h"
 
 void	sigint_handler(int dummy) {
+    (void)dummy;
 	g_signals.sigint = true;
 }
 
 void	sigalarm_handler(int dummy) {
+    (void)dummy;
 	g_signals.sigalarm = true;
 }

@@ -4,6 +4,6 @@ Re-coding the ping command will let you get acquainted with TCP/IP communication
 
 ## Usage:
 ```shell script
-docker-compose up
-docker-compose exec ping zsh
+docker-compose up --detach
+docker-compose exec ping bash
 ```

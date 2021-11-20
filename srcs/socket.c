@@ -11,6 +11,7 @@
 #include <stdio.h>
 
 int	create_socket(struct addrinfo* result) {
+    (void)result;
 //	const int socketFd = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
 	const int socketFd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
 	int opt_val = 1;

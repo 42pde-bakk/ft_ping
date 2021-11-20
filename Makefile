@@ -3,7 +3,6 @@ INCLUDE = -Iinclude
 
 SRC_DIR = ./srcs
 SRCS = $(wildcard $(SRC_DIR)/*.c)
-#SRCS = $(addprefix $(SRC_DIR)/, *.c)
 OBJS = $(SRCS:.c=.o)
 
 # COLORS
@@ -21,9 +20,6 @@ ifdef DEBUG
 else
  CFLAGS += -Ofast
 endif
-ifdef OPCOUNT
- CFLAGS += -D OPCOUNT
-endif
 SHELL := /bin/bash
 export SHELL
 export DEBUG
@@ -32,10 +28,9 @@ all: $(NAME)
 
 $(NAME): $(OBJS)
 	$(CC) $(CFLAGS) $(INCLUDE) $(OBJS) -o $@
-	@printf "$(PINK)Done building push_swap $(RESET)\n"
+	@printf "$(PINK)Done building ft_ping $(RESET)\n"
 
 %.o: %.c
-#	echo -e "$(BLUE) Compiling file $< to $@ $(RESET)"
 	$(CC) -c $(CFLAGS) $(INCLUDE) $^ -o $@
 
 clean:

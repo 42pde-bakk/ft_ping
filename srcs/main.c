@@ -13,7 +13,7 @@
 
 t_signals g_signals;
 
-static int wide_receiver(int socketfd, struct addrinfo* addrInfo) {
+int wide_receiver(int socketfd, struct addrinfo* addrInfo) {
 	struct msghdr   msg;
 	struct iovec    iov;
     ssize_t         size;
@@ -22,6 +22,10 @@ static int wide_receiver(int socketfd, struct addrinfo* addrInfo) {
 	int             s;
     struct timeval  tv_start,
                     tv_end;
+
+    (void)size;
+    (void)tv_start;
+    (void)tv_end;
 
 	memset(&msg, 0, sizeof(msg));
 	memset(&iov, 0, sizeof(iov));
@@ -54,6 +58,7 @@ int main(int argc, char** argv) {
     (void)argc;
     (void)argv;
     char addrstr[INET6_ADDRSTRLEN];
+    (void)addrstr;
     t_ping ping;
     memset(&ping, 0, sizeof(t_ping));
     char* hostname = "google.com";
@@ -70,6 +75,7 @@ int main(int argc, char** argv) {
     printf("after\n");
     print_addrinfo(1, addrInfo, "");
     int socketFd = create_socket(addrInfo);
+    (void)socketFd;
 
 //    print_addrinfo(1, addrInfo, "");
     // print initial thingy

@@ -5,6 +5,7 @@
 #ifndef FT_PING_FT_PING_H
 # define FT_PING_FT_PING_H
 # include <stdbool.h>
+# include <netdb.h>
 
 #if __APPLE__
 
