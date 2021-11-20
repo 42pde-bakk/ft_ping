@@ -55,24 +55,26 @@ int wide_receiver(int socketfd, struct addrinfo* addrInfo) {
 }
 
 int main(int argc, char** argv) {
-    (void)argc;
-    (void)argv;
-    char addrstr[INET6_ADDRSTRLEN];
+    char addrstr[INET_ADDRSTRLEN];
     (void)addrstr;
     t_ping ping;
+    if (argc < 2) {
+       parse_error();
+    }
     memset(&ping, 0, sizeof(t_ping));
-    char* hostname = "google.com";
+    char* hostname = argv[1];
 //	int sock = connecttosocket(addrInfo);
 //    int s = wide_receiver(sock, addrInfo);
 
     // parsing
 
     // set up signal handler
+    set_signal_handlers();
 
-    struct addrinfo* addrInfo = get_addrinfo("8.8.8.8");
+    struct addrinfo* addrInfo = get_addrinfo(hostname, &ping);
     print_addrinfo(1, addrInfo, "");
-//    inet_ntop(AF_INET, (void*)&ping.addr->sin_addr, addrstr, INET6_ADDRSTRLEN);
-    printf("after\n");
+    inet_ntop(AF_INET, &addrInfo->ai_addr, addrstr, INET_ADDRSTRLEN);
+    printf("after! addrstr='%s'\n", addrstr);
     print_addrinfo(1, addrInfo, "");
     int socketFd = create_socket(addrInfo);
     (void)socketFd;
@@ -80,6 +82,7 @@ int main(int argc, char** argv) {
 //    print_addrinfo(1, addrInfo, "");
     // print initial thingy
     printf("PING %s ..: %d data bytes\n", hostname, 56);
+    send_packet(socketFd, addrInfo);
 
     // while true
         // send packet

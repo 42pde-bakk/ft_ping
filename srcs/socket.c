@@ -9,6 +9,28 @@
 #include <string.h>
 #include <errno.h>
 #include <stdio.h>
+#include <unistd.h>
+
+struct addrinfo *get_addrinfo(const char *hostname, t_ping *ping) {
+    struct addrinfo hints, *result;
+
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_RAW;
+    hints.ai_protocol = IPPROTO_ICMP;
+    hints.ai_flags = AI_CANONNAME;
+
+    int error = getaddrinfo(hostname, NULL, &hints, &result);
+    if (error != 0) {
+        exit_error("Error. getaddrinfo failed");
+    }
+    (void)ping;
+    return (result);
+}
+
+void close_socket(int socketFd) {
+    close(socketFd);
+}
 
 int	create_socket(struct addrinfo* result) {
     (void)result;
@@ -17,13 +39,13 @@ int	create_socket(struct addrinfo* result) {
 	int opt_val = 1;
 
 	if (socketFd == -1) {
-		dprintf(2, " error: %s\n", strerror(errno));
-		exit_error("creating socket File Descriptor");
+		dprintf(2, " error: %s\n", strerror(errno)); // TODO: remove
+		exit_error("Error creating socket File Descriptor");
 	}
-	// setsockopt
 	if (setsockopt(socketFd, IPPROTO_IP, IP_HDRINCL, &opt_val, sizeof(int)) < 0) {
 		exit_error("setsockopt");
 	}
 	// save in struct?
 	return (socketFd);
 }
+

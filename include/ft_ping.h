@@ -37,6 +37,7 @@ typedef struct s_signals {
 
 } t_signals;
 extern t_signals g_signals;
+void    set_signal_handlers(void);
 
 typedef struct s_ping {
 	struct sockaddr_in*	addr;
@@ -44,10 +45,13 @@ typedef struct s_ping {
 } t_ping;
 
 int	create_socket(struct addrinfo* addrInfo);
-struct addrinfo *get_addrinfo(const char *hostname);
+struct addrinfo *get_addrinfo(const char *hostname, t_ping *ping);
+void    send_packet(int socketFd, struct addrinfo* dst_addrinfo);
+
 /*
  * ** Util functions:
  */
+void    parse_error(void);
 void	exit_error(const char* s);
 
 #endif //FT_PING_FT_PING_H
