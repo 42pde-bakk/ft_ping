@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <arpa/inet.h>
 
+const char* get_sockaddr(struct sockaddr* res);
 void    print_sockaddr(int fd, struct sockaddr* res, const char* prefix);
 void    print_addrinfo(int fd, struct addrinfo* ai, const char* prefix);
 

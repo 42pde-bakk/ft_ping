@@ -8,9 +8,10 @@
 #include <netinet/ip_icmp.h>
 #include <string.h>
 #include <stdio.h>
-#include <netdb.h>
 #include <ft_ping.h>
 
+
+// Internet checksum (RFC 1071) for error checking, calculated from the ICMP header and data with value 0 substituted for this field.
 unsigned short checksum(void *b, int len)
 {   unsigned short *buf = b;
     unsigned int sum=0;
@@ -26,35 +27,26 @@ unsigned short checksum(void *b, int len)
     return result;
 }
 
-void    send_packet(int socketFd, struct addrinfo* dst_addrinfo) {
-//    socklen_t len=sizeof(struct sockaddr_in);
-//    struct icmp *icmp_send,
-//                *icmp_recv;
-//
-//    icmp_send->icmp_type = ICMP_ECHO;
-//    icmp_send->icmp_code = 0;
-//    icmp_send->icmp_id = getpid();
-//    icmp_send->icmp_seq = htons(1);
-    unsigned char   buff[200];
-//    unsigned char*  p = buff;
-//    p += sizeof(icmp_send);
-//    *p = 'A';
-//
-//    icmp_send->icmp_cksum = 0;
-//    memcpy(buff, icmp_send, sizeof(icmp_send)) ;
-//
-//    icmp_send->icmp_cksum = checksum(buff, sizeof(icmp_send) + 1);
-//    memcpy(buff, icmp_send, sizeof(icmp_send)) ;
+void    initialize_packet(struct s_packet* packet, t_ping* ping) {
+    memset(packet, 0, sizeof(*packet));
+    packet->icmp_header.icmp_type = ICMP_ECHO; // Echo Request
+    packet->icmp_header.icmp_code = ICMP_ECHOREPLY; // Echo Reply
+    packet->icmp_header.icmp_cksum = checksum(packet, sizeof(*packet));
+    packet->icmp_header.icmp_id = ping->pid;
+    packet->icmp_header.icmp_seq = ping->messageCount;
+}
 
-    int error = sendto(socketFd, buff, sizeof(buff), 0, (struct sockaddr*)dst_addrinfo, sizeof(struct addrinfo));
-    if (error) {
+int    send_packet(t_ping* ping) {
+    t_packet packet;
+    memset(&packet, 0, sizeof(t_packet));
+
+    initialize_packet(&packet, ping);
+    ssize_t sent_bytes = sendto(ping->socketFd, &packet, sizeof(t_packet), 0, (struct sockaddr*)ping->addrInfo->ai_addr, sizeof(*ping->addrInfo->ai_addr));
+
+    if (sent_bytes == -1) {
         perror("sendto");
-        exit_error("Error sending message");
-    } else {
-        printf("no error sending message\n");
+        return (1);
     }
-
-//    if ( sendto(sd, (unsigned char*)buff, sizeof(icmp_send) + 1, 0, (struct sockaddr*)addr, sizeof(*addr)) <= 0 ) {
-//        printf("Send err.\n");
-//    }
+    ping->messageCount++;
+    return (0);
 }

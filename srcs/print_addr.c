@@ -7,29 +7,29 @@
 #include <arpa/inet.h>
 
 void    print_sockaddr(int fd, struct sockaddr* res, const char* prefix) {
-	char s[INET6_ADDRSTRLEN > INET_ADDRSTRLEN ? INET6_ADDRSTRLEN : INET_ADDRSTRLEN] = "\0";
-	switch(res->sa_family) {
-		case AF_INET: {
-			struct sockaddr_in *addr_in = (struct sockaddr_in *)res;
+    char s[INET6_ADDRSTRLEN > INET_ADDRSTRLEN ? INET6_ADDRSTRLEN : INET_ADDRSTRLEN] = "\0";
+    switch(res->sa_family) {
+        case AF_INET: {
+            struct sockaddr_in *addr_in = (struct sockaddr_in *)res;
 
-			////char s[INET_ADDRSTRLEN] = '\0';
-			// this is large enough to include terminating null
+            ////char s[INET_ADDRSTRLEN] = '\0';
+            // this is large enough to include terminating null
 
-			inet_ntop(AF_INET, &(addr_in->sin_addr), s, INET_ADDRSTRLEN);
-			break;
-		}
-		case AF_INET6: {
-			struct sockaddr_in6 *addr_in6 = (struct sockaddr_in6 *)res;
+            inet_ntop(AF_INET, &(addr_in->sin_addr), s, INET_ADDRSTRLEN);
+            break;
+        }
+        case AF_INET6: {
+            struct sockaddr_in6 *addr_in6 = (struct sockaddr_in6 *)res;
 
-			////char s[INET6_ADDRSTRLEN] = '\0';
-			// not sure if large enough to include terminating null?
+            ////char s[INET6_ADDRSTRLEN] = '\0';
+            // not sure if large enough to include terminating null?
 
-			inet_ntop(AF_INET6, &(addr_in6->sin6_addr), s, INET6_ADDRSTRLEN);
-			break;
-		}
-		default:
-			break;
-	}
+            inet_ntop(AF_INET6, &(addr_in6->sin6_addr), s, INET6_ADDRSTRLEN);
+            break;
+        }
+        default:
+            break;
+    }
 	dprintf(fd, "%ssockaddr: %s\n", prefix, s);
 }
 

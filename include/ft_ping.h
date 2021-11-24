@@ -6,47 +6,39 @@
 # define FT_PING_FT_PING_H
 # include <stdbool.h>
 # include <netdb.h>
+//# include <netinet/in.h>
+# include <netinet/ip.h>
+# include <netinet/ip_icmp.h>
+# include <netinet/icmp6.h>
 
-#if __APPLE__
 
-//	struct iphdr {
-//	#if defined(__LITTLE_ENDIAN_BITFIELD)
-//		__u8    ihl:4,
-//					version:4;
-//	#elif defined (__BIG_ENDIAN_BITFIELD)
-//		__u8    version:4,
-//					ihl:4;
-//	#else
-//	#endif
-//		__u8   tos;
-//		__u16  tot_len;
-//		__u16  id;
-//		__u16  frag_off;
-//		__u8   ttl;
-//		__u8   protocol;
-//		__u16  check;
-//		__u32  saddr;
-//		__u32  daddr;
-//		/*The options start here. */
-//	};
-#endif
-
-typedef struct s_signals {
+typedef struct  s_signals {
 	bool	sigint,
 			sigalarm;
+}               t_signals;
 
-} t_signals;
+typedef struct  s_packet {
+    char        buf[16];
+    struct icmp icmp_header;
+}               t_packet;
+
 extern t_signals g_signals;
 void    set_signal_handlers(void);
 
 typedef struct s_ping {
 	struct sockaddr_in*	addr;
-
+	char                addrstr[INET_ADDRSTRLEN];
+	pid_t               pid;
+	int                 socketFd;
+	size_t              messageCount;
+    struct addrinfo*    addrInfo;
+    const char*         sockaddr;
 } t_ping;
 
 int	create_socket(struct addrinfo* addrInfo);
 struct addrinfo *get_addrinfo(const char *hostname, t_ping *ping);
-void    send_packet(int socketFd, struct addrinfo* dst_addrinfo);
+
+int    send_packet(t_ping* ping);
 
 /*
  * ** Util functions:
