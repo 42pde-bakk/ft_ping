@@ -54,4 +54,6 @@ dkms.conf
 # CLion
 .idea/
 cmake-build-debug/
+
+# ft_ping
 ft_ping

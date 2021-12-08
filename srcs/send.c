@@ -13,14 +13,17 @@
 
 // Internet checksum (RFC 1071) for error checking, calculated from the ICMP header and data with value 0 substituted for this field.
 unsigned short checksum(void *b, int len)
-{   unsigned short *buf = b;
-    unsigned int sum=0;
-    unsigned short result;
+{   unsigned short* buf = b;
+    unsigned int    sum;
+    unsigned short  result;
 
-    for ( sum = 0; len > 1; len -= 2 )
-        sum += *buf++;
-    if ( len == 1 )
+    for ( sum = 0; len > 1; len -= 2 ) {
+        sum += *buf;
+        ++buf;
+    }
+    if ( len == 1 ) {
         sum += *(unsigned char*)buf;
+    }
     sum = (sum >> 16) + (sum & 0xFFFF);
     sum += (sum >> 16);
     result = ~sum;
@@ -28,12 +31,14 @@ unsigned short checksum(void *b, int len)
 }
 
 void    initialize_packet(struct s_packet* packet, t_ping* ping) {
+    (void)ping;
     memset(packet, 0, sizeof(*packet));
+
     packet->icmp_header.icmp_type = ICMP_ECHO; // Echo Request
     packet->icmp_header.icmp_code = ICMP_ECHOREPLY; // Echo Reply
     packet->icmp_header.icmp_cksum = checksum(packet, sizeof(*packet));
-    packet->icmp_header.icmp_id = ping->pid;
-    packet->icmp_header.icmp_seq = ping->messageCount;
+    packet->icmp_header.icmp_id = htons(ping->pid);
+    packet->icmp_header.icmp_seq = htons(0); //= ping->messageCount;
 }
 
 int    send_packet(t_ping* ping) {
@@ -47,6 +52,7 @@ int    send_packet(t_ping* ping) {
         perror("sendto");
         return (1);
     }
+    printf("done sending packet\n");
     ping->messageCount++;
     return (0);
 }

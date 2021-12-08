@@ -22,23 +22,41 @@ typedef struct  s_packet {
     struct icmp icmp_header;
 }               t_packet;
 
+typedef struct  s_echoreply {
+    struct msghdr   msghdr;
+    struct iovec    iov;
+    struct icmp*    icmp;
+    char            buf[2000];
+    int             received_bytes;
+}               t_echoreply;
+
 extern t_signals g_signals;
 void    set_signal_handlers(void);
 
 typedef struct s_ping {
-	struct sockaddr_in*	addr;
+	struct sockaddr_in	sockaddr;
 	char                addrstr[INET_ADDRSTRLEN];
 	pid_t               pid;
-	int                 socketFd;
 	size_t              messageCount;
     struct addrinfo*    addrInfo;
-    const char*         sockaddr;
+    char*               address;
+    t_packet            packet;
+
+    char*               hostname;
+    int                 socketFd;
+    size_t              package_count,
+                        packages_transmitted,
+                        packages_received;
+    struct timeval      time_start;
+    struct sockaddr_in  addr;
+
 } t_ping;
 
 int	create_socket(struct addrinfo* addrInfo);
-struct addrinfo *get_addrinfo(const char *hostname, t_ping *ping);
+int resolve_hostname(const char *hostname, struct in_addr* ip);
 
 int    send_packet(t_ping* ping);
+int receive_message(t_ping* ping);
 
 /*
  * ** Util functions:

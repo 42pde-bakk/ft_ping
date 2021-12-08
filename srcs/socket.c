@@ -10,22 +10,23 @@
 #include <errno.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <stdlib.h>
 
-struct addrinfo *get_addrinfo(const char *hostname, t_ping *ping) {
-    struct addrinfo hints, *result;
+int resolve_hostname(const char *hostname, struct in_addr *ip) {
+    struct addrinfo hints,
+                    *result;
 
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_RAW;
-    hints.ai_protocol = IPPROTO_ICMP;
-    hints.ai_flags = AI_CANONNAME;
+//    hints.ai_protocol = IPPROTO_ICMP;
+//    hints.ai_flags = AI_CANONNAME;
 
-    int error = getaddrinfo(hostname, NULL, &hints, &result);
-    if (error != 0) {
+    if (getaddrinfo(hostname, NULL, &hints, &result))
         exit_error("Error. getaddrinfo failed");
-    }
-    (void)ping;
-    return (result);
+    *ip = ((struct sockaddr_in *)result->ai_addr)->sin_addr;
+    free(result);
+    return (0);
 }
 
 void close_socket(int socketFd) {
