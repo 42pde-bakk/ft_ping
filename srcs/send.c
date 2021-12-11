@@ -8,6 +8,7 @@
 #include <netinet/ip_icmp.h>
 #include <string.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <ft_ping.h>
 
 
@@ -30,29 +31,20 @@ unsigned short checksum(void *b, int len)
     return result;
 }
 
-void    initialize_packet(struct s_packet* packet, t_ping* ping) {
-    (void)ping;
-    memset(packet, 0, sizeof(*packet));
-
-    packet->icmp_header.icmp_type = ICMP_ECHO; // Echo Request
-    packet->icmp_header.icmp_code = ICMP_ECHOREPLY; // Echo Reply
-    packet->icmp_header.icmp_cksum = checksum(packet, sizeof(*packet));
-    packet->icmp_header.icmp_id = htons(ping->pid);
-    packet->icmp_header.icmp_seq = htons(0); //= ping->messageCount;
-}
 
 int    send_packet(t_ping* ping) {
-    t_packet packet;
-    memset(&packet, 0, sizeof(t_packet));
+    char sent_package[PACKET_SIZE];
 
-    initialize_packet(&packet, ping);
-    ssize_t sent_bytes = sendto(ping->socketFd, &packet, sizeof(t_packet), 0, (struct sockaddr*)ping->addrInfo->ai_addr, sizeof(*ping->addrInfo->ai_addr));
+    ++ping->sequence;
 
+    gen_ip_header(sent_package, ping->dest.sin_addr.s_addr);
+    gen_icmp_msg(sent_package + IP_HDR_SIZE, ping->sequence);
+
+    ssize_t sent_bytes = sendto(ping->socketFd, sent_package, PACKET_SIZE, 0, (struct sockaddr*)&ping->dest, sizeof(ping->dest));
     if (sent_bytes == -1) {
         perror("sendto");
         return (1);
     }
     printf("done sending packet\n");
-    ping->messageCount++;
     return (0);
 }

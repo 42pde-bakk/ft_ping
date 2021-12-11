@@ -11,6 +11,12 @@
 # include <netinet/ip_icmp.h>
 # include <netinet/icmp6.h>
 
+# define IP_HDR_SIZE			20
+# define ICMP_HDR_SIZE			ICMP_MINLEN
+# define ICMP_PAYLOAD_SIZE		56
+# define PACKET_SIZE			(IP_HDR_SIZE + ICMP_HDR_SIZE + ICMP_PAYLOAD_SIZE)
+# define ALIGN_TIMESTAMP		4
+
 
 typedef struct  s_signals {
 	bool	sigint,
@@ -34,26 +40,14 @@ extern t_signals g_signals;
 void    set_signal_handlers(void);
 
 typedef struct s_ping {
-	struct sockaddr_in	sockaddr;
-	char                addrstr[INET_ADDRSTRLEN];
-	pid_t               pid;
-	size_t              messageCount;
-    struct addrinfo*    addrInfo;
-    char*               address;
-    t_packet            packet;
-
-    char*               hostname;
-    int                 socketFd;
-    size_t              package_count,
-                        packages_transmitted,
-                        packages_received;
-    struct timeval      time_start;
-    struct sockaddr_in  addr;
-
+	struct sockaddr_in	dest;
+	const char*         destination_address;
+	int                 socketFd;
+	size_t              sequence;
 } t_ping;
 
-int	create_socket(struct addrinfo* addrInfo);
-int resolve_hostname(const char *hostname, struct in_addr* ip);
+int     create_socket();
+void    close_socket(int socketFd);
 
 int    send_packet(t_ping* ping);
 int receive_message(t_ping* ping);
@@ -62,6 +56,9 @@ int receive_message(t_ping* ping);
  * ** Util functions:
  */
 void    parse_error(void);
+int     parse_input(t_ping* ping, char** argv);
 void	exit_error(const char* s);
+void	gen_ip_header(void *packet, u_int32_t dest);
+void	gen_icmp_msg(void *packet, int seq);
 
 #endif //FT_PING_FT_PING_H

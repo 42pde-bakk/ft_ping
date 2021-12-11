@@ -3,6 +3,7 @@
 //
 
 #include "ft_ping.h"
+#include <stdio.h>
 
 void    parse_error(void) {
     const char* usage_msg = "usage: ping [-AaDdfnoQqRrv] [-c count] [-G sweepmaxsize]\n"
@@ -21,4 +22,24 @@ void    parse_error(void) {
                             "            -apple-connect       # call connect(2) in the socket\n"
                             "            -apple-time          # display current time\n";
     exit_error(usage_msg);
+}
+
+int parse_input(t_ping* ping, char** argv) {
+    struct addrinfo hints = {
+            .ai_family = AF_INET,
+            .ai_socktype = SOCK_RAW,
+            .ai_protocol = IPPROTO_ICMP
+    };
+    struct addrinfo* result;
+
+    // Check flags
+
+    if (getaddrinfo(argv[1], 0, &hints, &result)) {
+        perror("getaddrinfo");
+        return (1);
+    }
+    ping->dest.sin_addr.s_addr = ((struct sockaddr_in*)result->ai_addr)->sin_addr.s_addr;
+    freeaddrinfo(result);
+    ping->destination_address = argv[1];
+    return (0);
 }
