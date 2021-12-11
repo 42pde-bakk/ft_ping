@@ -24,9 +24,15 @@ typedef struct  s_signals {
 }               t_signals;
 
 typedef struct  s_packet {
-    char        buf[16];
-    struct icmp icmp_header;
+    char            buf[PACKET_SIZE];
+    struct iphdr*   ip;
+    struct icmphdr* hdr;
 }               t_packet;
+
+typedef struct	s_response {
+	struct iovec	iov[1];
+	struct msghdr	msg;
+}				t_response;
 
 typedef struct  s_echoreply {
     struct msghdr   msghdr;
@@ -44,6 +50,7 @@ typedef struct s_ping {
 	const char*         destination_address;
 	int                 socketFd;
 	size_t              sequence;
+	t_packet            packet;
 } t_ping;
 
 int     create_socket();

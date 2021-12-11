@@ -9,8 +9,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <arpa/inet.h>
 #include <ft_ping.h>
-
 
 // Internet checksum (RFC 1071) for error checking, calculated from the ICMP header and data with value 0 substituted for this field.
 unsigned short checksum(void *b, int len)
@@ -33,18 +33,21 @@ unsigned short checksum(void *b, int len)
 
 
 int    send_packet(t_ping* ping) {
-    char sent_package[PACKET_SIZE];
+    memset(ping->packet.buf, 0, PACKET_SIZE);
+    ping->packet.ip->version = 4;
+    ping->packet.ip->ihl = sizeof(*ping->packet.ip) >> 2;
+	ping->packet.ip->protocol = IPPROTO_ICMP;
+	
+	inet_pton(AF_INET, ping->destination_address, ping->packet.ip->daddr);
+	ping->packet.hdr->type = ICMP_ECHO;
+	ping->packet.hdr->code = ICMP_ECHOREPLY;
+	ping->packet.hdr->un.echo.id = getpid();
+	ping->packet.hdr->un.echo.sequence = ping->sequence++;
+	ping->packet.hdr->checksum = checksum((unsigned short*)ping->packet.hdr, sizeof(struct icmphdr));
 
-    ++ping->sequence;
-
-    gen_ip_header(sent_package, ping->dest.sin_addr.s_addr);
-    gen_icmp_msg(sent_package + IP_HDR_SIZE, ping->sequence);
-
-    ssize_t sent_bytes = sendto(ping->socketFd, sent_package, PACKET_SIZE, 0, (struct sockaddr*)&ping->dest, sizeof(ping->dest));
-    if (sent_bytes == -1) {
-        perror("sendto");
-        return (1);
-    }
-    printf("done sending packet\n");
-    return (0);
+	if (sendto(ping->socketFd, (void*)&ping->packet, PACKET_SIZE, 0, (void*)ping->rec_in, sizeof(struct sockaddr_in)) < 0) {
+		perror("sendto");
+		return (1);
+	}
+	return (0);
 }
