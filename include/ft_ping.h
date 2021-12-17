@@ -10,12 +10,10 @@
 # include <netinet/ip.h>
 # include <netinet/ip_icmp.h>
 # include <netinet/icmp6.h>
-
-# define IP_HDR_SIZE			20
-# define ICMP_HDR_SIZE			ICMP_MINLEN
-# define ICMP_PAYLOAD_SIZE		56
-# define PACKET_SIZE			(IP_HDR_SIZE + ICMP_HDR_SIZE + ICMP_PAYLOAD_SIZE)
-# define ALIGN_TIMESTAMP		4
+# define PACKET_PING_SIZE 84
+# define USEC_TIMEOUT 50000
+# define TTL 17
+# define FLAG_V 0x02
 
 
 typedef struct  s_signals {
@@ -23,49 +21,65 @@ typedef struct  s_signals {
 			sigalarm;
 }               t_signals;
 
-typedef struct  s_packet {
-    char            buf[PACKET_SIZE];
-    struct iphdr*   ip;
-    struct icmphdr* hdr;
-}               t_packet;
+typedef struct	s_pckt
+{
+    char			buf[PACKET_PING_SIZE];
+    struct iphdr	*ip;
+    struct icmphdr	*hdr;
+}				t_pckt;
 
-typedef struct	s_response {
-	struct iovec	iov[1];
-	struct msghdr	msg;
-}				t_response;
+typedef struct	s_res
+{
+    struct iovec	iov[1];
+    struct msghdr	msg;
+}				t_res;
 
-typedef struct  s_echoreply {
-    struct msghdr   msghdr;
-    struct iovec    iov;
-    struct icmp*    icmp;
-    char            buf[2000];
-    int             received_bytes;
-}               t_echoreply;
+typedef struct	s_time
+{
+    struct timeval	time_start;
+    struct timeval	time_end;
+    struct timeval	s;
+    struct timeval	r;
+    long double		rtt;
+    long double		min;
+    long double		max;
+    long double		avg;
+    long double		sum_square;
+}				t_time;
 
 extern t_signals g_signals;
 void    set_signal_handlers(void);
 
 typedef struct s_ping {
-	struct sockaddr_in	dest;
-	const char*         destination_address;
-	int                 socketFd;
-	size_t              sequence;
-	t_packet            packet;
+	struct sockaddr_in*	rec_in;
+	const char*         hostname;
+	char                addrstr[INET6_ADDRSTRLEN];
+    int					sockfd;
+    pid_t				pid;
+    int					seq;
+    int					sended;
+    int					reiceved;
+    int					bytes;
+    t_res				response;
+    t_time				time;
+    int					ttl;
+    int					count;
+    int					interval;
+    int					daddr;
+    unsigned char		flags;
+    t_signals			signals;
 } t_ping;
 
-int     create_socket();
-void    close_socket(int socketFd);
 
-int    send_packet(t_ping* ping);
-int receive_message(t_ping* ping);
+int	parse_argv(int argc, char** argv, t_ping* ping);
+
 
 /*
  * ** Util functions:
  */
-void    parse_error(void);
-int     parse_input(t_ping* ping, char** argv);
-void	exit_error(const char* s);
-void	gen_ip_header(void *packet, u_int32_t dest);
-void	gen_icmp_msg(void *packet, int seq);
+unsigned short checksum(void *b, int len);
+void*       ft_calloc(size_t count, size_t size);
+void	    exit_error(const char* s);
+const char* get_usage_string(void);
 
 #endif //FT_PING_FT_PING_H

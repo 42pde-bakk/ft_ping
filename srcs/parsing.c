@@ -1,45 +1,47 @@
-//
-// Created by Peer De bakker on 11/20/21.
-//
-
 #include "ft_ping.h"
+#include <string.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <arpa/inet.h>
 
-void    parse_error(void) {
-    const char* usage_msg = "usage: ping [-AaDdfnoQqRrv] [-c count] [-G sweepmaxsize]\n"
-                            "            [-g sweepminsize] [-h sweepincrsize] [-i wait]\n"
-                            "            [-l preload] [-M mask | time] [-m ttl] [-p pattern]\n"
-                            "            [-S src_addr] [-s packetsize] [-t timeout][-W waittime]\n"
-                            "            [-z tos] host\n"
-                            "       ping [-AaDdfLnoQqRrv] [-c count] [-I iface] [-i wait]\n"
-                            "            [-l preload] [-M mask | time] [-m ttl] [-p pattern] [-S src_addr]\n"
-                            "            [-s packetsize] [-T ttl] [-t timeout] [-W waittime]\n"
-                            "            [-z tos] mcast-group\n"
-                            "Apple specific options (to be specified before mcast-group or host like all options)\n"
-                            "            -b boundif           # bind the socket to the interface\n"
-                            "            -k traffic_class     # set traffic class socket option\n"
-                            "            -K net_service_type  # set traffic class socket options\n"
-                            "            -apple-connect       # call connect(2) in the socket\n"
-                            "            -apple-time          # display current time\n";
-    exit_error(usage_msg);
+int	obtain_addrinfo(t_ping* ping, const char* hostname) {
+	struct addrinfo hints;
+	struct addrinfo* result;
+
+    memset(&hints, 0, sizeof(struct addrinfo));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_RAW;
+    hints.ai_protocol = IPPROTO_ICMP;
+    if (getaddrinfo(hostname, NULL, &hints, &result) != 0)
+        return (1);
+    ping->rec_in = (struct sockaddr_in*)result->ai_addr;
+    return (0);
 }
 
-int parse_input(t_ping* ping, char** argv) {
-    struct addrinfo hints = {
-            .ai_family = AF_INET,
-            .ai_socktype = SOCK_RAW,
-            .ai_protocol = IPPROTO_ICMP
-    };
-    struct addrinfo* result;
-
-    // Check flags
-
-    if (getaddrinfo(argv[1], 0, &hints, &result)) {
-        perror("getaddrinfo");
-        return (1);
-    }
-    ping->dest.sin_addr.s_addr = ((struct sockaddr_in*)result->ai_addr)->sin_addr.s_addr;
-    freeaddrinfo(result);
-    ping->destination_address = argv[1];
-    return (0);
+int	parse_argv(int argc, char** argv, t_ping* ping) {
+	for (int i = 0; i < argc; ++i) {
+		if (argv[i][0] == '-') {
+			for (int n = 1; argv[i][n]; ++n) {
+				if (argv[i][n] == 'h') {
+					exit_error(get_usage_string());
+				} else if (argv[i][n] == 'v') {
+				    // handle the v flag
+				} else {
+				    dprintf(STDERR_FILENO, "ping: invalid option -- %c\n%s\n", argv[i][n], get_usage_string());
+				    return (1);
+				}
+			}
+		}
+		else {
+		    // Parse hostname
+		    ping->hostname = argv[i];
+		    if (obtain_addrinfo(ping, argv[i])) {
+		        dprintf(STDERR_FILENO, "ping: cannot resolve %s: Unknown host\n", argv[i]);
+		        return (1);
+		    }
+		    inet_ntop(AF_INET, (void*)&ping->rec_in->sin_addr, ping->addrstr, INET6_ADDRSTRLEN);
+		}
+	}
+	return (0);
 }
