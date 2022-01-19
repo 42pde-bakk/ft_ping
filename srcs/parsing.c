@@ -20,7 +20,7 @@ int	obtain_addrinfo(t_ping* ping, const char* hostname) {
 }
 
 int	parse_argv(int argc, char** argv, t_ping* ping) {
-	for (int i = 0; i < argc; ++i) {
+	for (int i = 1; i < argc; ++i) {
 		if (argv[i][0] == '-') {
 			for (int n = 1; argv[i][n]; ++n) {
 				if (argv[i][n] == 'h') {
@@ -28,16 +28,16 @@ int	parse_argv(int argc, char** argv, t_ping* ping) {
 				} else if (argv[i][n] == 'v') {
 				    // handle the v flag
 				} else {
-				    dprintf(STDERR_FILENO, "ping: invalid option -- %c\n%s\n", argv[i][n], get_usage_string());
+				    dprintf(STDERR_FILENO, "ping: invalid option -- %c\n", argv[i][n]);
+				    dprintf(STDERR_FILENO, "%s\n", get_usage_string());
 				    return (1);
 				}
 			}
 		}
 		else {
-		    // Parse hostname
-		    ping->hostname = argv[i];
-		    if (obtain_addrinfo(ping, argv[i])) {
-		        dprintf(STDERR_FILENO, "ping: cannot resolve %s: Unknown host\n", argv[i]);
+			ping->host = argv[i];
+		    if (obtain_addrinfo(ping, ping->host)) {
+		        dprintf(STDERR_FILENO, "ping: %s: Name or service not known\n", ping->host);
 		        return (1);
 		    }
 		    inet_ntop(AF_INET, (void*)&ping->rec_in->sin_addr, ping->addrstr, INET6_ADDRSTRLEN);

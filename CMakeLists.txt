@@ -9,4 +9,4 @@ file(GLOB HEADER_FILES "include/*.h")
 
 include_directories(include)
 # Add executable target with source files listed in SOURCE_FILES variable
-add_executable(simple_example ${SOURCE_FILES} ${HEADER_FILES} srcs/ip_header.c)
+add_executable(simple_example ${SOURCE_FILES} ${HEADER_FILES})

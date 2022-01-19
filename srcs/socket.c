@@ -3,11 +3,14 @@
 //
 #include "ft_ping.h"
 #include <unistd.h>
+#include <stdio.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-void    close_socket(int fd) {
-    close(fd);
+void close_socket(t_ping *ping) {
+    if (close(ping->sockfd))
+        dprintf(STDERR_FILENO, "Error closing socketfd\n");
+    ping->sockfd = -1;
 }
 
 int create_socket(void) {

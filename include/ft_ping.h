@@ -16,9 +16,14 @@
 # define FLAG_V 0x02
 
 
+//typedef struct  s_signals {
+//	bool	sigint,
+//			sigalarm;
+//}               t_signals;
 typedef struct  s_signals {
-	bool	sigint,
-			sigalarm;
+
+	bool	send,
+			finito;
 }               t_signals;
 
 typedef struct	s_pckt
@@ -49,16 +54,18 @@ typedef struct	s_time
 
 extern t_signals g_signals;
 void    set_signal_handlers(void);
+void    signal_handler(int sig);
 
 typedef struct s_ping {
-	struct sockaddr_in*	rec_in;
-	const char*         hostname;
-	char                addrstr[INET6_ADDRSTRLEN];
-    int					sockfd;
+    t_pckt				pckt;
+    struct sockaddr_in	*rec_in;
+    char				*host;
+    char				addrstr[INET6_ADDRSTRLEN];
     pid_t				pid;
     int					seq;
-    int					sended;
-    int					reiceved;
+    int					sockfd;
+    int					sent;
+    int					received;
     int					bytes;
     t_res				response;
     t_time				time;
@@ -67,11 +74,13 @@ typedef struct s_ping {
     int					interval;
     int					daddr;
     unsigned char		flags;
-    t_signals			signals;
 } t_ping;
 
 
 int	parse_argv(int argc, char** argv, t_ping* ping);
+int create_socket(void);
+void	send_packet(t_ping* ping);
+void	get_packet(t_ping* ping);
 
 
 /*
