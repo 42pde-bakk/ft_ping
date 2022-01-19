@@ -28,6 +28,9 @@ t_ping* init_ping(void) {
 
 
 void    start_ping(t_ping* ping) {
+    struct timeval  timestamp_start;
+    struct timeval  timestamp_end;
+
     ping->sockfd = create_socket();
     printf("PING %s (%s) %d(%d) bytes of data.\n", ping->host, ping->addrstr, NAKED_PACKET_SIZE, PACKET_SIZE);
 

@@ -53,10 +53,6 @@ typedef struct	s_time
     long double		sum_square;
 }				t_time;
 
-extern t_signals g_signals;
-void    set_signal_handlers(void);
-void    signal_handler(int sig);
-
 typedef struct s_ping {
     t_pckt				pckt;
     struct sockaddr_in	*rec_in;
@@ -77,16 +73,26 @@ typedef struct s_ping {
     unsigned char		flags;
 } t_ping;
 
+// the one true global
+extern t_signals g_signals;
 
+// time.c
+void    save_current_time(struct timeval* timestamp);
+
+// signals.c
+void    set_signal_handlers(void);
+
+// parsing.c
 int	parse_argv(int argc, char** argv, t_ping* ping);
+
+// socket.c
 int create_socket(void);
+
+// packet.c
 void	send_packet(t_ping* ping);
 void	get_packet(t_ping* ping);
 
-
-/*
- * ** Util functions:
- */
+// utils.c
 unsigned short checksum(void *b, int len);
 void*       ft_calloc(size_t count, size_t size);
 void	    exit_error(const char* s);
