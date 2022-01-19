@@ -3,6 +3,7 @@
 //
 
 #include <signal.h>
+#include <stdio.h>
 #include "ft_ping.h"
 
 void    sigalarm_handler(int dummy) {

@@ -29,12 +29,11 @@ t_ping* init_ping(void) {
 
 void    start_ping(t_ping* ping) {
     ping->sockfd = create_socket();
-    printf("PING %s (%s) %d(%d) bytes of data.\n", ping->host, ping->addrstr, 56, 84);
+    printf("PING %s (%s) %d(%d) bytes of data.\n", ping->host, ping->addrstr, NAKED_PACKET_SIZE, PACKET_SIZE);
+
     while (!g_signals.finito) {
         if (g_signals.send) {
-            printf("lets send something\n");
             send_packet(ping);
-            printf("sent packet\n");
             alarm(1);
             get_packet(ping);
         }

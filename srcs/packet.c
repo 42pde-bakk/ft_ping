@@ -10,7 +10,7 @@
 
 void	send_packet(t_ping* ping)
 {
-    bzero((void *)ping->pckt.buf, PACKET_PING_SIZE);
+    bzero((void *)ping->pckt.buf, PACKET_SIZE);
     ping->pckt.ip->version = 4;
     ping->pckt.ip->ihl = sizeof(*ping->pckt.ip) >> 2;
     ping->pckt.ip->ttl = ping->ttl;
@@ -23,7 +23,7 @@ void	send_packet(t_ping* ping)
     ping->pckt.hdr->un.echo.sequence = ping->seq++;
     ping->pckt.hdr->checksum = checksum((unsigned short*)ping->pckt.hdr,
                                             sizeof(struct icmphdr));
-    if (sendto(ping->sockfd, (void *)&ping->pckt, PACKET_PING_SIZE, 0,
+    if (sendto(ping->sockfd, (void *)&ping->pckt, PACKET_SIZE, 0,
                (void *)ping->rec_in,
                sizeof(struct sockaddr_in)) < 0)
         exit_error("Error: sendto");
@@ -32,6 +32,7 @@ void	send_packet(t_ping* ping)
     ping->sent > 1 ? gettimeofday(&ping->time.time_start, NULL) : 0;
     ping->sent++;
     g_signals.send = 0;
+    printf("set g_signals.send to 0\n");
 }
 
 void	calc_rtt(t_ping* ping)
@@ -58,7 +59,7 @@ void	init_header(t_ping* ping)
     t_res	*res;
 
     res = &ping->response;
-    bzero((void *)ping->pckt.buf, PACKET_PING_SIZE);
+    bzero((void *)ping->pckt.buf, PACKET_SIZE);
     bzero(res, sizeof(t_res));
     res->iov->iov_base = (void *)ping->pckt.buf;
     res->iov->iov_len = sizeof(ping->pckt.buf);

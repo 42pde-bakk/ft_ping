@@ -10,7 +10,8 @@
 # include <netinet/ip.h>
 # include <netinet/ip_icmp.h>
 # include <netinet/icmp6.h>
-# define PACKET_PING_SIZE 84
+# define NAKED_PACKET_SIZE 56
+# define PACKET_SIZE 84
 # define USEC_TIMEOUT 50000
 # define TTL 17
 # define FLAG_V 0x02
@@ -28,7 +29,7 @@ typedef struct  s_signals {
 
 typedef struct	s_pckt
 {
-    char			buf[PACKET_PING_SIZE];
+    char			buf[PACKET_SIZE];
     struct iphdr	*ip;
     struct icmphdr	*hdr;
 }				t_pckt;
