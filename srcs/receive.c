@@ -50,17 +50,17 @@ void	get_packet(t_ping* ping) {
     ssize_t		ret;
 
     init_header(&response, ping);
-    while (!g_signals.finito)
+    while (g_signals.running)
     {
         ret = recvmsg(ping->sockfd, &response.msg, MSG_DONTWAIT);
         if (ret > 0)
         {
+            printf("received packet with hdr->un.echo.id=%d\n", ping->pckt.hdr->un.echo.id);
             if (ping->pckt.hdr->un.echo.id == ping->pid)
             {
                 calc_rtt(ping);
 				display_receive_msg(ret, ping);
-            }
-			else {            // else if (ping->flags & FLAG_V)
+            } else { // else if (ping->flags & FLAG_V)
 				printf_v(ret, ping);
 			}
             break;

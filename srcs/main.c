@@ -4,10 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
-t_signals g_signals = {
-	.send = 1,
-	.finito = 0
-};
+t_signals g_signals;
 
 t_ping* init_ping(void) {
 	t_ping* ping = calloc(1, sizeof(t_ping));
@@ -17,6 +14,7 @@ t_ping* init_ping(void) {
     ping->pckt.ip = (struct iphdr *)ping->pckt.buf;
     ping->pckt.hdr = (struct icmphdr *)(ping->pckt.ip + 1);
     ping->pid = getpid();
+    printf("ping->pid = %d\n", ping->pid);
     ping->seq = 1;
     ping->time.min = 0.0;
     ping->time.max = 0.0;
@@ -24,6 +22,9 @@ t_ping* init_ping(void) {
     ping->ttl = TTL;
     ping->count = -1;
     ping->interval = 1;
+
+	g_signals.running = 1;
+	g_signals.send = 1;
 	return (ping);
 }
 
@@ -33,22 +34,23 @@ void    start_ping(t_ping* ping) {
 //    struct timeval  timestamp_end;
 
     ping->sockfd = create_socket();
-    printf("PING %s (%s) %d(%d) bytes of data.\n", ping->host, ping->addrstr, NAKED_PACKET_SIZE, PACKET_SIZE);
+    printf("PING %s (%s) %d(%d) bytes of data.\n", ping->host, ping->addrstr, 56, PACKET_SIZE);
 
-    while (!g_signals.finito) {
+    while (g_signals.running) {
         if (g_signals.send) {
             send_packet(ping);
-            printf("after send_packet\n");
-            alarm(1);
-            printf("after alarm(1)\n");
+            alarm(ping->interval);
             get_packet(ping);
-            printf("after get_packet\n");
         }
     }
 }
 
 int main(int argc, char** argv) {
 	t_ping*	ping = init_ping();
+
+	if (getuid() != 0) {
+		exit_error("Error. Must run program as root to be able to open raw sockets.");
+	}
 
 	if (argc < 2) {
 		exit_error(get_usage_string());

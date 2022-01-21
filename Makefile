@@ -16,9 +16,7 @@ RESET = \x1b[0m
 
 CFLAGS = -Wall -Werror -Wextra -pedantic
 ifdef DEBUG
- CFLAGS += -g -fsanitize=address
-else
- CFLAGS += -Ofast
+ CFLAGS += -g3 -fsanitize=address
 endif
 SHELL := /bin/bash
 export SHELL

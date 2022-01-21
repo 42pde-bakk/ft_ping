@@ -10,7 +10,6 @@
 # include <netinet/ip.h>
 # include <netinet/ip_icmp.h>
 # include <netinet/icmp6.h>
-# define NAKED_PACKET_SIZE 56
 # define PACKET_SIZE 84
 # define USEC_TIMEOUT 50000
 # define TTL 17
@@ -24,7 +23,7 @@
 typedef struct  s_signals {
 
 	bool	send,
-			finito;
+			running;
 }               t_signals;
 
 typedef struct	s_pckt
