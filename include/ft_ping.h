@@ -80,6 +80,8 @@ void	calc_rtt(t_ping* ping);
 
 // signals.c
 void    set_signal_handlers(void);
+void    sigalarm_handler(int dummy);
+void    sigint_handler(int dummy);
 
 // parsing.c
 int	parse_argv(int argc, char** argv, t_ping* ping);

@@ -60,8 +60,9 @@ void	get_packet(t_ping* ping) {
                 calc_rtt(ping);
 				display_receive_msg(ret, ping);
             }
-            else if (ping->flags & FLAG_V)
-                printf_v(ret, ping);
+			else {            // else if (ping->flags & FLAG_V)
+				printf_v(ret, ping);
+			}
             break;
         }
     }

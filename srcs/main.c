@@ -3,13 +3,15 @@
 #include "ft_ping.h"
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
 t_signals g_signals = {
-        .send = 1,
-        .finito = 0
+	.send = 1,
+	.finito = 0
 };
 
 t_ping* init_ping(void) {
-	t_ping* ping = ft_calloc(1, sizeof(t_ping));
+	t_ping* ping = calloc(1, sizeof(t_ping));
+	bzero(ping, sizeof(t_ping));
 	if (!ping)
 		exit_error("Error mallocing for ping struct");
     ping->pckt.ip = (struct iphdr *)ping->pckt.buf;
@@ -51,8 +53,9 @@ int main(int argc, char** argv) {
 	if (argc < 2) {
 		exit_error(get_usage_string());
 	}
-    if (parse_argv(argc, argv, ping))
+    if (parse_argv(argc, argv, ping)) {
         exit(EXIT_FAILURE);
+	}
     set_signal_handlers();
     start_ping(ping);
     exit(EXIT_SUCCESS);

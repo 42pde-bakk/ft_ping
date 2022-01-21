@@ -10,7 +10,7 @@ int	obtain_addrinfo(t_ping* ping, const char* hostname) {
 	struct addrinfo hints;
 	struct addrinfo* result;
 
-    memset(&hints, 0, sizeof(struct addrinfo));
+	bzero(&hints, sizeof(hints));
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_RAW;
     hints.ai_protocol = IPPROTO_ICMP;
