@@ -12,7 +12,8 @@ void	init_packet(t_ping* ping) {
     pckt->ip->ihl = sizeof(*ping->pckt.ip) >> 2;
     pckt->ip->ttl = ping->ttl;
     pckt->ip->protocol = IPPROTO_ICMP;
-    inet_pton(AF_INET, ping->addrstr, &pckt->ip->daddr);
+    if (inet_pton(AF_INET, ping->addrstr, &pckt->ip->daddr) == -1)
+		exit_error("Error: inet_pton");
     ping->daddr = pckt->ip->daddr;
     pckt->hdr->type = ICMP_ECHO;
     pckt->hdr->code = ICMP_ECHOREPLY;
@@ -22,7 +23,7 @@ void	init_packet(t_ping* ping) {
     pckt->hdr->checksum = checksum((unsigned short*)pckt->hdr, sizeof(struct icmphdr));
 }
 
-void	send_packet(t_ping* ping)
+void send_packet(t_ping *ping, t_time *time)
 {
 	init_packet(ping);
 	ssize_t ret = sendto(ping->sockfd, (void *)&ping->pckt, PACKET_SIZE, 0,
@@ -30,12 +31,9 @@ void	send_packet(t_ping* ping)
     if (ret < 0) {
         exit_error("Error: sendto");
 	}
-	save_current_time(&ping->time.s);
-	printf("ping->seq=%d\n", ping->seq);
+	save_current_time(&time->s);
 	if (ping->seq - 1 == 0) {
-		save_current_time(&ping->time.time_start);
+		save_current_time(&time->time_start);
 	}
-	printf("3.ping->pckt->ip->ttl = %d\n", ping->pckt.ip->ttl);
-    // ping->sent++;
     g_signals.send = 0;
 }

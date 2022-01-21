@@ -17,10 +17,7 @@
 # define FLAG_V 0x02
 
 
-//typedef struct  s_signals {
-//	bool	sigint,
-//			sigalarm;
-//}               t_signals;
+
 typedef struct  s_signals {
 
 	bool	send,
@@ -61,7 +58,6 @@ typedef struct s_ping {
     int					sockfd;
     // int					sent;
     int					received;
-    t_time				time;
     int					ttl;
     int					count;
     int					interval;
@@ -74,7 +70,7 @@ extern t_signals g_signals;
 
 // time.c
 void    save_current_time(struct timeval* timestamp);
-double	calc_rtt(t_ping* ping);
+double	calc_rtt(t_ping* ping, t_time* time);
 unsigned int	timeval_difference(struct timeval start, struct timeval end);
 
 // signals.c
@@ -87,15 +83,16 @@ int	parse_argv(int argc, char** argv, t_ping* ping);
 
 // socket.c
 int create_socket(void);
+void close_socket(t_ping *ping);
 
 // send.c
-void	send_packet(t_ping* ping);
+void	send_packet(t_ping* ping, t_time* time);
 
 // receive.c
-void	get_packet(t_ping* ping);
+void	get_packet(t_ping* ping, t_time* time);
 
 // display.c
-void	print_statistics(t_ping* ping);
+void	print_statistics(t_ping* ping, t_time* time);
 void	display_receive_msg(ssize_t ret, t_ping* ping, double rtt);
 void	display_receive_msg_v(ssize_t ret, t_ping* ping);
 

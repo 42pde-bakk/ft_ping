@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
+#include <sys/socket.h>
 t_signals g_signals;
 
 t_ping* init_ping(void) {
@@ -17,7 +18,6 @@ t_ping* init_ping(void) {
     printf("ping->pid = %d\n", ping->pid);
     ping->seq = 0;
     ping->ttl = TTL;
-    ping->count = -1;
     ping->interval = 1;
 
 	g_signals.running = 1;
@@ -25,24 +25,27 @@ t_ping* init_ping(void) {
 	return (ping);
 }
 
+void	cleanup_ping(t_ping* ping) {
+	close_socket(ping);
+	exit(EXIT_SUCCESS);
+}
+
 
 void    start_ping(t_ping* ping) {
-//    struct timeval  timestamp_start;
-//    struct timeval  timestamp_end;
+	t_time time;
+	bzero(&time, sizeof(t_time));
 
-    ping->sockfd = create_socket();
     printf("PING %s (%s) %d(%d) bytes of data.\n", ping->host, ping->addrstr, 56, PACKET_SIZE);
 
-	// save_current_time(&ping->time.time_start);
-
     while (g_signals.running) {
+
         if (g_signals.send) {
-            send_packet(ping);
-            alarm(ping->interval);
-            get_packet(ping);
+            send_packet(ping, &time);
+			alarm(ping->interval);
+            get_packet(ping, &time);
         }
     }
-	print_statistics(ping);
+	print_statistics(ping, &time);
 }
 
 int main(int argc, char** argv) {
@@ -58,7 +61,9 @@ int main(int argc, char** argv) {
     if (parse_argv(argc, argv, ping)) {
         exit(EXIT_FAILURE);
 	}
+	ping->sockfd = create_socket();
     set_signal_handlers();
     start_ping(ping);
-    exit(EXIT_SUCCESS);
+
+	cleanup_ping(ping);
 }

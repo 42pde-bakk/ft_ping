@@ -17,21 +17,21 @@ unsigned int	timeval_difference(struct timeval start, struct timeval end) {
 	return diff_seconds * 1000 + (int)(diff_useconds / 1000);
 }
 
-double	calc_rtt(t_ping* ping)
+double calc_rtt(t_ping* ping, t_time* time)
 {
     double rtt;
 
-	save_current_time(&ping->time.r);
+	save_current_time(&time->r);
     ping->received++;
 
-    rtt = (ping->time.r.tv_usec - ping->time.s.tv_usec) / 1000000.0;
-    rtt += (ping->time.r.tv_sec - ping->time.s.tv_sec);
+    rtt = (double)(time->r.tv_usec - time->s.tv_usec) / 1000000.0;
+    rtt += (double)(time->r.tv_sec - time->s.tv_sec);
     rtt *= 1000.0;
-    if (rtt > ping->time.max)
-        ping->time.max = rtt;
-    if (ping->time.min == 0 || rtt < ping->time.min)
-        ping->time.min = rtt;
-    ping->time.sum += rtt;
-    ping->time.sum_square += rtt * rtt;
+    if (rtt > time->max)
+        time->max = rtt;
+    if (time->min == 0 || rtt < time->min)
+        time->min = rtt;
+    time->sum += rtt;
+    time->sum_square += rtt * rtt;
 	return rtt;
 }

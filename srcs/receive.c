@@ -22,9 +22,9 @@ void	init_header(t_res* res, t_ping* ping)
     res->msg.msg_flags = MSG_DONTWAIT;
 }
 
-void	get_packet(t_ping* ping) {
+void get_packet(t_ping *ping, t_time *time) {
 	t_res	response;
-    ssize_t		ret;
+    ssize_t	ret;
 
     init_header(&response, ping);
     while (g_signals.running)
@@ -32,16 +32,17 @@ void	get_packet(t_ping* ping) {
         ret = recvmsg(ping->sockfd, &response.msg, MSG_DONTWAIT);
         if (ret > 0)
         {
-			printf("r3.ping->pckt->ip->ttl = %d\n", ping->pckt.ip->ttl);
-            printf("received packet with hdr->un.echo.id=%d\n", ping->pckt.hdr->un.echo.id);
+            // printf("received packet with hdr->un.echo.id=%d\n", ping->pckt.hdr->un.echo.id);
             if (ping->pckt.hdr->un.echo.id == ping->pid)
             {
-                double rtt = calc_rtt(ping);
+                double rtt = calc_rtt(ping, time);
 				display_receive_msg(ret, ping, rtt);
-	            break;
+				// if (ping->flags & FLAG_o)
+				// 	g_signals.running = 0;
             } else { // else if (ping->flags & FLAG_V)
 				display_receive_msg_v(ret, ping);
 			}
+            break;
         }
     }
 }
