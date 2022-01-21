@@ -46,10 +46,10 @@ typedef struct	s_time
     struct timeval	time_end;
     struct timeval	s;
     struct timeval	r;
-    long double		rtt;
-    long double		min;
-    long double		max;
-    long double		avg;
+    // double		rtt;
+    double		min;
+    double		max;
+    long double	sum;
     long double		sum_square;
 }				t_time;
 
@@ -61,7 +61,7 @@ typedef struct s_ping {
     pid_t				pid;
     int					seq;
     int					sockfd;
-    int					sent;
+    // int					sent;
     int					received;
     t_time				time;
     int					ttl;
@@ -76,7 +76,7 @@ extern t_signals g_signals;
 
 // time.c
 void    save_current_time(struct timeval* timestamp);
-void	calc_rtt(t_ping* ping);
+double	calc_rtt(t_ping* ping);
 unsigned int	timeval_difference(struct timeval start, struct timeval end);
 
 // signals.c
@@ -98,6 +98,8 @@ void	get_packet(t_ping* ping);
 
 // display.c
 void	print_statistics(t_ping* ping);
+void	display_receive_msg(ssize_t ret, t_ping* ping, double rtt);
+void	display_receive_msg_v(ssize_t ret, t_ping* ping);
 
 // utils.c
 unsigned short checksum(void *b, int len);

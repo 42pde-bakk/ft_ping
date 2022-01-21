@@ -31,11 +31,11 @@ void	send_packet(t_ping* ping)
         exit_error("Error: sendto");
 	}
 	save_current_time(&ping->time.s);
-	printf("ping->sent=%d\n", ping->sent);
+	// printf("ping->sent=%d\n", ping->sent);
 	printf("ping->seq=%d\n", ping->seq);
-	if (ping->sent == 0) {
+	if (ping->seq - 1 == 0) {
 		save_current_time(&ping->time.time_start);
 	}
-    ping->sent++;
+    // ping->sent++;
     g_signals.send = 0;
 }

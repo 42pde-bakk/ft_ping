@@ -15,10 +15,7 @@ t_ping* init_ping(void) {
     ping->pckt.hdr = (struct icmphdr *)(ping->pckt.ip + 1);
     ping->pid = getpid();
     printf("ping->pid = %d\n", ping->pid);
-    ping->seq = 1;
-    ping->time.min = 0.0;
-    ping->time.max = 0.0;
-    ping->time.sum_square = 0;
+    ping->seq = 0;
     ping->ttl = TTL;
     ping->count = -1;
     ping->interval = 1;
