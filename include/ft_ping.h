@@ -10,6 +10,7 @@
 # include <netinet/ip.h>
 # include <netinet/ip_icmp.h>
 # include <netinet/icmp6.h>
+#include <sys/time.h>
 # define PACKET_SIZE 84
 # define USEC_TIMEOUT 50000
 # define TTL 17
@@ -76,6 +77,7 @@ extern t_signals g_signals;
 // time.c
 void    save_current_time(struct timeval* timestamp);
 void	calc_rtt(t_ping* ping);
+unsigned int	timeval_difference(struct timeval start, struct timeval end);
 
 // signals.c
 void    set_signal_handlers(void);
@@ -93,6 +95,9 @@ void	send_packet(t_ping* ping);
 
 // receive.c
 void	get_packet(t_ping* ping);
+
+// display.c
+void	print_statistics(t_ping* ping);
 
 // utils.c
 unsigned short checksum(void *b, int len);

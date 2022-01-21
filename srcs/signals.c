@@ -13,16 +13,12 @@ void	print_signals() {
 void    sigalarm_handler(int dummy) {
     (void)dummy;
     g_signals.send = 1;
-	print_signals();
+	// print_signals();
 }
 
 void    sigint_handler(int dummy) {
     (void)dummy;
-    bool should_exit = (bool)!g_signals.running;
     g_signals.running = 0;
-    print_signals();
-    if (should_exit)
-        exit_error("Double sigint received\n");
 }
 
 void    set_signal_handlers(void) {

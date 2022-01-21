@@ -36,6 +36,8 @@ void    start_ping(t_ping* ping) {
     ping->sockfd = create_socket();
     printf("PING %s (%s) %d(%d) bytes of data.\n", ping->host, ping->addrstr, 56, PACKET_SIZE);
 
+	// save_current_time(&ping->time.time_start);
+
     while (g_signals.running) {
         if (g_signals.send) {
             send_packet(ping);
@@ -43,6 +45,7 @@ void    start_ping(t_ping* ping) {
             get_packet(ping);
         }
     }
+	print_statistics(ping);
 }
 
 int main(int argc, char** argv) {

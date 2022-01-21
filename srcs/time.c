@@ -10,6 +10,13 @@ void    save_current_time(struct timeval* timestamp) {
         exit_error("Error: gettimeofday");
 }
 
+unsigned int	timeval_difference(struct timeval start, struct timeval end) {
+	unsigned int diff_seconds = end.tv_sec - start.tv_sec;
+	int diff_useconds = end.tv_usec - start.tv_usec;
+
+	return diff_seconds * 1000 + (int)(diff_useconds / 1000);
+}
+
 void	calc_rtt(t_ping* ping)
 {
     long double rtt = 0.0;

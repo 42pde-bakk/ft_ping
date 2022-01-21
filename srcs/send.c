@@ -31,7 +31,11 @@ void	send_packet(t_ping* ping)
         exit_error("Error: sendto");
 	}
 	save_current_time(&ping->time.s);
-    ping->sent > 1 ? gettimeofday(&ping->time.time_start, NULL) : 0;
+	printf("ping->sent=%d\n", ping->sent);
+	printf("ping->seq=%d\n", ping->seq);
+	if (ping->sent == 0) {
+		save_current_time(&ping->time.time_start);
+	}
     ping->sent++;
     g_signals.send = 0;
 }
