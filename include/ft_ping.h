@@ -64,7 +64,6 @@ typedef struct s_ping {
     int					sent;
     int					received;
     int					bytes;
-    t_res				response;
     t_time				time;
     int					ttl;
     int					count;
@@ -78,6 +77,7 @@ extern t_signals g_signals;
 
 // time.c
 void    save_current_time(struct timeval* timestamp);
+void	calc_rtt(t_ping* ping);
 
 // signals.c
 void    set_signal_handlers(void);
@@ -88,8 +88,10 @@ int	parse_argv(int argc, char** argv, t_ping* ping);
 // socket.c
 int create_socket(void);
 
-// packet.c
+// send.c
 void	send_packet(t_ping* ping);
+
+// receive.c
 void	get_packet(t_ping* ping);
 
 // utils.c

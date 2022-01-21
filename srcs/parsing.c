@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <arpa/inet.h>
 
+
 int	obtain_addrinfo(t_ping* ping, const char* hostname) {
 	struct addrinfo hints;
 	struct addrinfo* result;

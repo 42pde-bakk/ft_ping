@@ -28,8 +28,8 @@ t_ping* init_ping(void) {
 
 
 void    start_ping(t_ping* ping) {
-    struct timeval  timestamp_start;
-    struct timeval  timestamp_end;
+//    struct timeval  timestamp_start;
+//    struct timeval  timestamp_end;
 
     ping->sockfd = create_socket();
     printf("PING %s (%s) %d(%d) bytes of data.\n", ping->host, ping->addrstr, NAKED_PACKET_SIZE, PACKET_SIZE);
@@ -37,8 +37,11 @@ void    start_ping(t_ping* ping) {
     while (!g_signals.finito) {
         if (g_signals.send) {
             send_packet(ping);
+            printf("after send_packet\n");
             alarm(1);
+            printf("after alarm(1)\n");
             get_packet(ping);
+            printf("after get_packet\n");
         }
     }
 }

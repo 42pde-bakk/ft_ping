@@ -9,11 +9,13 @@
 void    sigalarm_handler(int dummy) {
     (void)dummy;
     g_signals.send = 1;
+    printf("dummy=%d, g_signals.send=%d\n", dummy, g_signals.send);
 }
 
 void    sigint_handler(int dummy) {
     (void)dummy;
     g_signals.finito = 1;
+    printf("dummy=%d, g_signals.finito=%d\n", dummy, g_signals.finito);
 }
 
 
