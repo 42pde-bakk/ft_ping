@@ -12,7 +12,6 @@ t_ping* init_ping(void) {
 	t_ping* ping = ft_calloc(1, sizeof(t_ping));
 	if (!ping)
 		exit_error("Error mallocing for ping struct");
-//	ping->pckt.ip = (struct iphdr*)ping->pckt.buf;
     ping->pckt.ip = (struct iphdr *)ping->pckt.buf;
     ping->pckt.hdr = (struct icmphdr *)(ping->pckt.ip + 1);
     ping->pid = getpid();

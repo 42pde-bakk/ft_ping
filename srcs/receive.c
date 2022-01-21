@@ -22,21 +22,32 @@ void	init_header(t_res* res, t_ping* ping)
     res->msg.msg_flags = MSG_DONTWAIT;
 }
 
-void	printf_v(t_ping* ping)
+void	printf_v(ssize_t ret, t_ping* ping)
 {
     char		str[50];
 
 	bzero(str, sizeof(str));
-    printf("%d bytes from %s: type=%d code=%d\n",
-           ping->bytes - (int)sizeof(struct iphdr),
-           inet_ntop(AF_INET, (void*)&ping->pckt.ip->saddr, str, 100),
-           ping->pckt.hdr->type, ping->pckt.hdr->code);
+	(void)ret;
+	(void)ping;
+    // printf("%lz bytes from %s: type=%d code=%d\n",
+    //        ret - sizeof(struct iphdr),
+    //        inet_ntop(AF_INET, (void*)&ping->pckt.ip->saddr, str, 100),
+    //        ping->pckt.hdr->type, ping->pckt.hdr->code);
 }
 
-void	get_packet(t_ping* ping)
-{
+void	display_receive_msg(ssize_t ret, t_ping* ping) {
+	printf("%lu bytes from %s: icmp_seq=%d ttl=%d time=%.2Lf ms\n",
+		ret - sizeof(struct iphdr),
+		ping->addrstr,
+		ping->pckt.hdr->un.echo.sequence,
+		ping->pckt.ip->ttl,
+		ping->time.rtt
+	);
+}
+
+void	get_packet(t_ping* ping) {
 	t_res	response;
-    int		ret = 0;
+    ssize_t		ret;
 
     init_header(&response, ping);
     while (!g_signals.finito)
@@ -44,18 +55,14 @@ void	get_packet(t_ping* ping)
         ret = recvmsg(ping->sockfd, &response.msg, MSG_DONTWAIT);
         if (ret > 0)
         {
-            ping->bytes = ret;
             if (ping->pckt.hdr->un.echo.id == ping->pid)
             {
                 calc_rtt(ping);
-                printf("%lu bytes from %s: icmp_seq=%d ttl=%d time=%.2Lf ms\n",
-                       ping->bytes - sizeof(struct iphdr), ping->addrstr,
-                       ping->pckt.hdr->un.echo.sequence, ping->pckt.ip->ttl,
-                       ping->time.rtt);
+				display_receive_msg(ret, ping);
             }
             else if (ping->flags & FLAG_V)
-                printf_v(ping);
-            return ;
+                printf_v(ret, ping);
+            break;
         }
     }
 }

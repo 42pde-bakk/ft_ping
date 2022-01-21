@@ -63,7 +63,6 @@ typedef struct s_ping {
     int					sockfd;
     int					sent;
     int					received;
-    int					bytes;
     t_time				time;
     int					ttl;
     int					count;

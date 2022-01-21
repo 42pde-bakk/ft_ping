@@ -14,8 +14,8 @@ void	calc_rtt(t_ping* ping)
 {
     long double rtt = 0.0;
 
-    if (gettimeofday(&ping->time.r, NULL) < 0)
-        exit_error("Error: gettimeofday");
+	save_current_time(&ping->time.r);
+
     ping->received++;
     rtt = (ping->time.r.tv_usec - ping->time.s.tv_usec) / 1000000.0;
     rtt += (ping->time.r.tv_sec - ping->time.s.tv_sec);
