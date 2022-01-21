@@ -13,7 +13,7 @@
 #include <sys/time.h>
 # define PACKET_SIZE 84
 # define USEC_TIMEOUT 50000
-# define TTL 17
+# define TTL 64
 # define FLAG_V 0x02
 
 
@@ -43,14 +43,12 @@ typedef struct	s_res
 typedef struct	s_time
 {
     struct timeval	time_start;
-    struct timeval	time_end;
     struct timeval	s;
     struct timeval	r;
-    // double		rtt;
     double		min;
     double		max;
     long double	sum;
-    long double		sum_square;
+    long double	sum_square;
 }				t_time;
 
 typedef struct s_ping {

@@ -32,6 +32,7 @@ void	get_packet(t_ping* ping) {
         ret = recvmsg(ping->sockfd, &response.msg, MSG_DONTWAIT);
         if (ret > 0)
         {
+			printf("r3.ping->pckt->ip->ttl = %d\n", ping->pckt.ip->ttl);
             printf("received packet with hdr->un.echo.id=%d\n", ping->pckt.hdr->un.echo.id);
             if (ping->pckt.hdr->un.echo.id == ping->pid)
             {

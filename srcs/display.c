@@ -1,7 +1,6 @@
 #include "ft_ping.h"
 #include <sys/time.h>
 #include <stdio.h>
-#include <math.h>
 
 static long double llsqrt(long long a) {
     long long prev = ~((long long) 1 << 63);
@@ -65,4 +64,5 @@ void	display_receive_msg(ssize_t ret, t_ping* ping, double rtt) {
 		ping->pckt.ip->ttl,
 		rtt
 	);
+	printf("ping->pckt.ip->ttl = %d\n", ping->pckt.ip->ttl);
 }
