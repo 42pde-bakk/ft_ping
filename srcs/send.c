@@ -7,7 +7,7 @@
 void	init_packet(t_ping* ping) {
 	t_pckt* pckt = &ping->pckt;
 
-    bzero((void *)pckt->buf, PACKET_SIZE);
+    ft_bzero((void *)pckt->buf, PACKET_SIZE);
     pckt->ip->version = IPVERSION;
     pckt->ip->ihl = sizeof(*ping->pckt.ip) >> 2;
     pckt->ip->ttl = ping->ttl;

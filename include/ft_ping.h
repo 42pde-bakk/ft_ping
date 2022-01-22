@@ -14,7 +14,9 @@
 # define PACKET_SIZE 84
 # define USEC_TIMEOUT 50000
 # define TTL 64
-# define FLAG_V 0x02
+# define FLAG_o 0x01
+# define FLAG_q 0x02
+# define FLAG_v 0x03
 
 
 
@@ -99,7 +101,9 @@ void	display_receive_msg_v(ssize_t ret, t_ping* ping);
 // utils.c
 unsigned short checksum(void *b, int len);
 void*       ft_calloc(size_t count, size_t size);
+void		ft_bzero(void *s, size_t n);
 void	    exit_error(const char* s);
+void		exit_success(const char* str);
 const char* get_usage_string(void);
 
 #endif //FT_PING_FT_PING_H

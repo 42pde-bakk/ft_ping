@@ -29,7 +29,7 @@ void	print_statistics(t_ping* ping, t_time* time) {
 	// save_current_time(&time_end);
 	float packet_loss = (ping->seq - ping->received) / ping->seq * 100;
 
-	printf("--- %s ping statistics ---\n", ping->host);
+	printf("--- %s ft_ping statistics ---\n", ping->host);
 	if (packet_loss < 0.01f || packet_loss > 99.99f)
 		printf("%d packets transmitted, %d received, %.0f%% packet loss, ", ping->seq, ping->received, packet_loss);
 	else
@@ -48,7 +48,7 @@ void	display_receive_msg_v(ssize_t ret, t_ping* ping)
 {
     char		str[50];
 
-	bzero(str, sizeof(str));
+	ft_bzero(str, sizeof(str));
 	(void)ret;
 	(void)ping;
     // printf("%lz bytes from %s: type=%d code=%d\n",
@@ -58,6 +58,8 @@ void	display_receive_msg_v(ssize_t ret, t_ping* ping)
 }
 
 void	display_receive_msg(ssize_t ret, t_ping* ping, double rtt) {
+	if (ping->flags & FLAG_q)
+		return;
 	printf("%lu bytes from %s: icmp_seq=%d ttl=%d time=%.2f ms\n",
 		ret - sizeof(struct iphdr),
 		ping->addrstr,

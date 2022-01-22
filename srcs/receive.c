@@ -10,8 +10,8 @@
 
 void	init_header(t_res* res, t_ping* ping)
 {
-    bzero(res, sizeof(t_res));
-    bzero((void *)ping->pckt.buf, PACKET_SIZE);
+    ft_bzero(res, sizeof(t_res));
+    ft_bzero((void *)ping->pckt.buf, PACKET_SIZE);
 
     res->iov->iov_base = (void *)ping->pckt.buf;
     res->iov->iov_len = sizeof(ping->pckt.buf);
@@ -37,8 +37,8 @@ void get_packet(t_ping *ping, t_time *time) {
             {
                 double rtt = calc_rtt(ping, time);
 				display_receive_msg(ret, ping, rtt);
-				// if (ping->flags & FLAG_o)
-				// 	g_signals.running = 0;
+				if (ping->flags & FLAG_o)
+					g_signals.running = 0;
             } else { // else if (ping->flags & FLAG_V)
 				display_receive_msg_v(ret, ping);
 			}

@@ -8,14 +8,13 @@
 t_signals g_signals;
 
 t_ping* init_ping(void) {
-	t_ping* ping = calloc(1, sizeof(t_ping));
-	bzero(ping, sizeof(t_ping));
+	t_ping* ping = ft_calloc(1, sizeof(t_ping));
+	ft_bzero(ping, sizeof(t_ping));
 	if (!ping)
 		exit_error("Error mallocing for ping struct");
     ping->pckt.ip = (struct iphdr *)ping->pckt.buf;
     ping->pckt.hdr = (struct icmphdr *)(ping->pckt.ip + 1);
     ping->pid = getpid();
-    printf("ping->pid = %d\n", ping->pid);
     ping->seq = 0;
     ping->ttl = TTL;
     ping->interval = 1;
@@ -33,12 +32,10 @@ void	cleanup_ping(t_ping* ping) {
 
 void    start_ping(t_ping* ping) {
 	t_time time;
-	bzero(&time, sizeof(t_time));
+	ft_bzero(&time, sizeof(t_time));
 
     printf("PING %s (%s) %d(%d) bytes of data.\n", ping->host, ping->addrstr, 56, PACKET_SIZE);
-
     while (g_signals.running) {
-
         if (g_signals.send) {
             send_packet(ping, &time);
 			alarm(ping->interval);

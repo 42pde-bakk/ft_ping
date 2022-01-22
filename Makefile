@@ -1,5 +1,6 @@
 NAME = ft_ping
-INCLUDE = -Iinclude
+INCLUDE = -Iinclude -Ilibft/include
+HEADER = include/ft_ping.h
 
 SRC_DIR = ./srcs
 SRCS = $(wildcard $(SRC_DIR)/*.c)
@@ -24,7 +25,7 @@ export DEBUG
 
 all: $(NAME)
 
-$(NAME): $(OBJS)
+$(NAME): $(OBJS) $(HEADER)
 	$(CC) $(CFLAGS) $(INCLUDE) $(OBJS) -o $@
 	@printf "$(PINK)Done building ft_ping $(RESET)\n"
 

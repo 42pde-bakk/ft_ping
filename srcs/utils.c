@@ -23,7 +23,10 @@ unsigned short checksum(void *b, int len) {
 }
 
 const char*	get_usage_string(void) {
-    static const char* usage_msg = "Usage: ft_ping [-v verbose] [-h help] destination";
+    static const char* usage_msg = "\
+Usage: ft_ping [-v verbose] [-h help] \
+[-q quiet] [-o onereply] \
+[-V version] destination";
 
 	return (usage_msg);
 }
@@ -33,9 +36,25 @@ void	exit_error(const char* str) {
 	exit(EXIT_FAILURE);
 }
 
+void	exit_success(const char* str) {
+	printf("%s\n", str);
+	exit(EXIT_SUCCESS);
+}
+
+void	ft_bzero(void* s, size_t n)
+{
+	size_t			i = 0;
+	unsigned char*	ptr = s;
+
+	while (i < n) {
+		ptr[i] = 0;
+		i++;
+	}
+}
+
 void	*ft_calloc(size_t count, size_t size)
 {
-	void	*ptr;
+	void*	ptr;
 
 	if (count == 0 || size == 0) {
 		count = 1;
@@ -43,6 +62,6 @@ void	*ft_calloc(size_t count, size_t size)
 	}
 	ptr = malloc(count * size);
 	if (ptr)
-		memset(ptr, 0, count * size);
+		ft_bzero(ptr, count * size);
 	return (ptr);
 }
