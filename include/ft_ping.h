@@ -55,10 +55,9 @@ typedef struct s_ping {
     struct sockaddr_in	*rec_in;
     char				*host;
     char				addrstr[INET6_ADDRSTRLEN];
-    pid_t				pid;
+    uint16_t			pid;
     int					seq;
     int					sockfd;
-    // int					sent;
     int					received;
     int					ttl;
     int					count;
@@ -95,11 +94,11 @@ void	get_packet(t_ping* ping, t_time* time);
 
 // display.c
 void	print_statistics(t_ping* ping, t_time* time);
-void	display_receive_msg(ssize_t ret, t_ping* ping, double rtt);
-void	display_receive_msg_v(ssize_t ret, t_ping* ping);
+void	display_receive_msg(ssize_t ret, t_ping* ping, double rtt, bool csfailed);
+void	display_receive_msg_v(ssize_t ret, t_ping* ping, bool csfailed);
 
 // utils.c
-unsigned short checksum(void *b, int len);
+unsigned short checksum(void *b, int len, unsigned short csum);
 void*       ft_calloc(size_t count, size_t size);
 void		ft_bzero(void *s, size_t n);
 void	    exit_error(const char* s);

@@ -44,27 +44,31 @@ void	print_statistics(t_ping* ping, t_time* time) {
 	);
 }
 
-void	display_receive_msg_v(ssize_t ret, t_ping* ping)
+void	display_receive_msg_v(ssize_t ret, t_ping* ping, bool csfailed)
 {
     char		str[50];
 
 	ft_bzero(str, sizeof(str));
 	(void)ret;
 	(void)ping;
+	(void)csfailed;
     // printf("%lz bytes from %s: type=%d code=%d\n",
     //        ret - sizeof(struct iphdr),
     //        inet_ntop(AF_INET, (void*)&ping->pckt.ip->saddr, str, 100),
     //        ping->pckt.hdr->type, ping->pckt.hdr->code);
 }
 
-void	display_receive_msg(ssize_t ret, t_ping* ping, double rtt) {
+void	display_receive_msg(ssize_t ret, t_ping* ping, double rtt, bool csfailed) {
 	if (ping->flags & FLAG_q)
 		return;
-	printf("%lu bytes from %s: icmp_seq=%d ttl=%d time=%.2f ms\n",
+	printf("%lu bytes from %s: icmp_seq=%d ttl=%d time=%.2f ms",
 		ret - sizeof(struct iphdr),
 		ping->addrstr,
 		ping->pckt.hdr->un.echo.sequence + 1,
 		ping->pckt.ip->ttl,
 		rtt
 	);
+	if (csfailed)
+		printf(" ((CHECKSUM FAILED))");
+	printf("\n");
 }

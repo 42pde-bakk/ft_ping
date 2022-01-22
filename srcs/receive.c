@@ -25,23 +25,30 @@ void	init_header(t_res* res, t_ping* ping)
 void get_packet(t_ping *ping, t_time *time) {
 	t_res	response;
     ssize_t	ret;
+    bool    csfailed = false;
 
-    init_header(&response, ping);
+    init_header(&response, ping); 
     while (g_signals.running)
     {
         ret = recvmsg(ping->sockfd, &response.msg, MSG_DONTWAIT);
+        // printf("recv2: pid=%d\n", ping->pckt.hdr->un.echo.id);
         if (ret > 0)
         {
-            // printf("received packet with hdr->un.echo.id=%d\n", ping->pckt.hdr->un.echo.id);
-            if (ping->pckt.hdr->un.echo.id == ping->pid)
-            {
-                double rtt = calc_rtt(ping, time);
-				display_receive_msg(ret, ping, rtt);
-				if (ping->flags & FLAG_o)
-					g_signals.running = 0;
-            } else { // else if (ping->flags & FLAG_V)
-				display_receive_msg_v(ret, ping);
-			}
+            if (ping->pckt.hdr->type == ICMP_ECHOREPLY) {
+                int sent_checksum = ping->pckt.hdr->checksum;
+                ping->pckt.hdr->checksum = 0;
+                int calc_checksum = checksum((unsigned short*)ping->pckt.hdr, sizeof(struct icmphdr), 0);
+                csfailed = !(sent_checksum == calc_checksum);
+                if (ping->pckt.hdr->un.echo.id == ping->pid)
+                {
+                    double rtt = calc_rtt(ping, time);
+                    display_receive_msg(ret, ping, rtt, csfailed);
+                    if (ping->flags & FLAG_o)
+                        g_signals.running = 0;
+                } else { // else if (ping->flags & FLAG_V)
+                    display_receive_msg_v(ret, ping, csfailed);
+                }
+            }
             break;
         }
     }

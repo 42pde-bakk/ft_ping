@@ -20,7 +20,7 @@ void	init_packet(t_ping* ping) {
     pckt->hdr->un.echo.id = ping->pid;
     pckt->hdr->un.echo.sequence = ping->seq++;
     pckt->hdr->checksum = 0;
-    pckt->hdr->checksum = checksum((unsigned short*)pckt->hdr, sizeof(struct icmphdr));
+    pckt->hdr->checksum = checksum((unsigned short*)pckt->hdr, sizeof(struct icmphdr), 0);
 }
 
 void send_packet(t_ping *ping, t_time *time)

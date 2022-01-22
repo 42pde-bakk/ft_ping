@@ -24,6 +24,7 @@ int	parse_flag(t_ping* ping, char flag) {
 	switch (flag) {
 		case 'h':
 			exit_success(get_usage_string());
+			__attribute__((fallthrough));
 		case 'o':
 			ping->flags |= FLAG_o;
 			return (1);
@@ -35,6 +36,7 @@ int	parse_flag(t_ping* ping, char flag) {
 			return (1);
 		case 'V':
 			exit_success("ft_ping utility, peerutils-s20220119");
+			__attribute__((fallthrough));
 		default:
 			return (0);
 	}

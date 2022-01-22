@@ -4,12 +4,12 @@
 #include <unistd.h>
 
 // Internet checksum (RFC 1071) for error checking, calculated from the ICMP header and data with value 0 substituted for this field.
-unsigned short checksum(void *b, int len) {
+unsigned short checksum(void *b, int len, unsigned short csum) {
     unsigned short* buf = b;
-    unsigned int    sum;
+    unsigned int    sum = csum;
     unsigned short  result;
 
-    for ( sum = 0; len > 1; len -= 2 ) {
+    for (; len > 1; len -= 2 ) {
         sum += *buf;
         ++buf;
     }
