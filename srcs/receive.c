@@ -81,17 +81,16 @@ void get_packet(t_ping *ping, t_time *time) {
                 int sent_checksum = ping->pckt.hdr->checksum;
                 ping->pckt.hdr->checksum = 0;
                 int calc_checksum = checksum((unsigned short*)ping->pckt.hdr, sizeof(struct icmphdr), 0);
-                csfailed = !(sent_checksum == calc_checksum);
+                csfailed = (sent_checksum != calc_checksum);
                 double rtt = calc_rtt(time);
                 if (ping->pckt.hdr->un.echo.id == ping->pid)
                 {
                     display_receive_msg(ret, ping, rtt, csfailed);
                     if (ping->flags & FLAG_o)
                         g_signals.running = 0;
-                } else if (ping->flags & FLAG_v) { // else if (ping->flags & FLAG_V)
-                    printf("received packet with id=%u\n", ping->pckt.hdr->un.echo.id);
-                    display_receive_msg_v(ret, ping, rtt, csfailed);
-                }
+                } else {
+					get_packet(ping, time);
+				}
                 break;
             } else
                 print_error_recv(ping);
