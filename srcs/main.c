@@ -16,7 +16,8 @@ t_ping* init_ping(void) {
     ping->pckt.hdr = (struct icmphdr *)(ping->pckt.ip + 1);
     ping->pid = getpid();
 	if (getpid() > UINT16_MAX)
-		exit_error("Error, wont be able to save pid value in iphdr");
+		dprintf(STDERR_FILENO, "Warning: pid [%d] higher than uint16_MAX [%u]\n", ping->pid, UINT16_MAX);
+		// exit_error("Error, wont be able to save pid value in iphdr");
     ping->seq = 0;
     ping->ttl = TTL;
     ping->interval = 1;

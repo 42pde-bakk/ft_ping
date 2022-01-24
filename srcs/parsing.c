@@ -21,25 +21,27 @@ int	obtain_addrinfo(t_ping* ping, const char* hostname) {
 }
 
 int	parse_flag(t_ping* ping, char flag) {
+	printf("flag=%c\n", flag);
 	switch (flag) {
 		case 'h':
 			exit_success(get_usage_string());
-			__attribute__((fallthrough));
+			break ;
 		case 'o':
 			ping->flags |= FLAG_o;
-			return (1);
+			break ;
 		case 'q':
 			ping->flags |= FLAG_q;
-			return (1);
+			break ;
 		case 'v':
 			ping->flags |= FLAG_v;
-			return (1);
+			break ;
 		case 'V':
 			exit_success("ft_ping utility, peerutils-s20220119");
-			__attribute__((fallthrough));
+			break ;
 		default:
 			return (0);
 	}
+	return (1);
 }
 
 int	parse_argv(int argc, char** argv, t_ping* ping) {

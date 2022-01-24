@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <sys/time.h>
 #include <arpa/inet.h>
+#include <sys/socket.h>
+#include <unistd.h>
 #include <string.h>
 
 void	init_header(t_res* res, t_ping* ping)
@@ -22,6 +24,46 @@ void	init_header(t_res* res, t_ping* ping)
     res->msg.msg_flags = MSG_DONTWAIT;
 }
 
+static char			*net_ntoa(struct in_addr in)
+{
+	static char		buffer[18];
+	unsigned char	*bytes = (unsigned char *) &in;
+
+	snprintf(buffer, sizeof(buffer), "%d.%d.%d.%d", \
+		bytes[0], bytes[1], bytes[2], bytes[3]);
+
+	return (buffer);
+}
+
+void    print_error_recv(t_ping* ping) {
+    static const char	*icmp_responses[] = {
+        [ICMP_DEST_UNREACH]		= "Destination Unreachable",
+        [ICMP_SOURCE_QUENCH]	= "Source Quench",
+        [ICMP_REDIRECT]			= "Redirect (change route)",
+        [ICMP_ECHO]				= "Echo Request",
+        [ICMP_TIME_EXCEEDED]	= "Time to live exceeded",
+        [ICMP_PARAMETERPROB]	= "Parameter Problem",
+        [ICMP_TIMESTAMP]		= "Timestamp Request",
+        [ICMP_TIMESTAMPREPLY]	= "Timestamp Reply",
+        [ICMP_INFO_REQUEST]		= "Information Request",
+        [ICMP_INFO_REPLY]		= "Information Reply",
+        [ICMP_ADDRESS]			= "Address Mask Request",
+        [ICMP_ADDRESSREPLY]		= "Address Mask Reply"
+    };
+    const char* sender = net_ntoa((struct in_addr) {.s_addr = ping->pckt.ip->saddr});
+
+    if (ping->pckt.hdr->type == ICMP_ECHO)
+        return ;
+
+    dprintf(STDERR_FILENO, "From %s icmp_seq=%hu %s\n",
+        sender,
+        ntohs(ping->pckt.hdr->un.echo.sequence),
+        icmp_responses[ping->pckt.hdr->type]
+    );
+    ++ping->errors;
+}
+
+
 void get_packet(t_ping *ping, t_time *time) {
 	t_res	response;
     ssize_t	ret;
@@ -34,6 +76,7 @@ void get_packet(t_ping *ping, t_time *time) {
         // printf("recv2: pid=%d\n", ping->pckt.hdr->un.echo.id);
         if (ret > 0)
         {
+            ping->received++;
             if (ping->pckt.hdr->type == ICMP_ECHOREPLY) {
                 int sent_checksum = ping->pckt.hdr->checksum;
                 ping->pckt.hdr->checksum = 0;
@@ -41,15 +84,18 @@ void get_packet(t_ping *ping, t_time *time) {
                 csfailed = !(sent_checksum == calc_checksum);
                 if (ping->pckt.hdr->un.echo.id == ping->pid)
                 {
-                    double rtt = calc_rtt(ping, time);
+                    double rtt = calc_rtt(time);
                     display_receive_msg(ret, ping, rtt, csfailed);
                     if (ping->flags & FLAG_o)
                         g_signals.running = 0;
-                } else { // else if (ping->flags & FLAG_V)
-                    display_receive_msg_v(ret, ping, csfailed);
+                } else if (ping->flags & FLAG_v) { // else if (ping->flags & FLAG_V)
+                    printf("received packet with id=%u\n", ping->pckt.hdr->un.echo.id);
+                    // display_receive_msg_v(ret, ping, csfailed);
                 }
-            }
-            break;
+                break;
+            } else
+                print_error_recv(ping);
+            // break;
         }
     }
 }

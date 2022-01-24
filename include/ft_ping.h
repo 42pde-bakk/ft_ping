@@ -14,9 +14,9 @@
 # define PACKET_SIZE 84
 # define USEC_TIMEOUT 50000
 # define TTL 64
-# define FLAG_o 0x01
-# define FLAG_q 0x02
-# define FLAG_v 0x03
+# define FLAG_o 1
+# define FLAG_q 2
+# define FLAG_v 4
 
 
 
@@ -59,11 +59,12 @@ typedef struct s_ping {
     int					seq;
     int					sockfd;
     int					received;
+    int                 errors;
     int					ttl;
     int					count;
     int					interval;
     int					daddr;
-    unsigned char		flags;
+    int         		flags;
 } t_ping;
 
 // the one true global
@@ -71,7 +72,7 @@ extern t_signals g_signals;
 
 // time.c
 void    save_current_time(struct timeval* timestamp);
-double	calc_rtt(t_ping* ping, t_time* time);
+double	calc_rtt(t_time* time);
 unsigned int	timeval_difference(struct timeval start, struct timeval end);
 
 // signals.c

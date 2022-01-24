@@ -17,12 +17,11 @@ unsigned int	timeval_difference(struct timeval start, struct timeval end) {
 	return diff_seconds * 1000 + (int)(diff_useconds / 1000);
 }
 
-double calc_rtt(t_ping* ping, t_time* time)
+double calc_rtt(t_time* time)
 {
     double rtt;
 
 	save_current_time(&time->r);
-    ping->received++;
 
     rtt = (double)(time->r.tv_usec - time->s.tv_usec) / 1000000.0;
     rtt += (double)(time->r.tv_sec - time->s.tv_sec);
