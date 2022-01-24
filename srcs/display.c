@@ -44,18 +44,13 @@ void	print_statistics(t_ping* ping, t_time* time) {
 	);
 }
 
-void	display_receive_msg_v(ssize_t ret, t_ping* ping, bool csfailed)
+void	display_receive_msg_v(ssize_t ret, t_ping* ping, double rtt, bool csfailed)
 {
-    char		str[50];
-
-	ft_bzero(str, sizeof(str));
-	(void)ret;
-	(void)ping;
-	(void)csfailed;
-    // printf("%lz bytes from %s: type=%d code=%d\n",
-    //        ret - sizeof(struct iphdr),
-    //        inet_ntop(AF_INET, (void*)&ping->pckt.ip->saddr, str, 100),
-    //        ping->pckt.hdr->type, ping->pckt.hdr->code);
+	if (ping->flags & FLAG_q)
+		return ;
+	
+	printf("[%u] ", ping->pckt.hdr->un.echo.id);
+	display_receive_msg(ret, ping, rtt, csfailed);
 }
 
 void	display_receive_msg(ssize_t ret, t_ping* ping, double rtt, bool csfailed) {

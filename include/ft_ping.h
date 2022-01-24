@@ -96,7 +96,7 @@ void	get_packet(t_ping* ping, t_time* time);
 // display.c
 void	print_statistics(t_ping* ping, t_time* time);
 void	display_receive_msg(ssize_t ret, t_ping* ping, double rtt, bool csfailed);
-void	display_receive_msg_v(ssize_t ret, t_ping* ping, bool csfailed);
+void	display_receive_msg_v(ssize_t ret, t_ping* ping, double rtt, bool csfailed);
 
 // utils.c
 unsigned short checksum(void *b, int len, unsigned short csum);
