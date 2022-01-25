@@ -2,9 +2,7 @@
 #include <unistd.h>
 #include "ft_ping.h"
 #include <stdlib.h>
-#include <string.h>
-#include <signal.h>
-#include <sys/socket.h>
+
 t_signals g_signals;
 
 t_ping* init_ping(void) {

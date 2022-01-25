@@ -1,8 +1,5 @@
 #include "ft_ping.h"
-#include <stdio.h>
-#include <sys/time.h>
 #include <arpa/inet.h>
-#include <string.h>
 
 void	init_packet(t_ping* ping) {
 	t_pckt* pckt = &ping->pckt;
@@ -10,8 +7,10 @@ void	init_packet(t_ping* ping) {
     ft_bzero((void *)pckt->buf, PACKET_SIZE);
     pckt->ip->version = IPVERSION;
     pckt->ip->ihl = sizeof(*ping->pckt.ip) >> 2;
+	pckt->ip->id = ping->pid;
     pckt->ip->ttl = ping->ttl;
     pckt->ip->protocol = IPPROTO_ICMP;
+	pckt->ip->tot_len = sizeof(pckt->buf);
     if (inet_pton(AF_INET, ping->addrstr, &pckt->ip->daddr) == -1)
 		exit_error("Error: inet_pton");
     ping->daddr = pckt->ip->daddr;
