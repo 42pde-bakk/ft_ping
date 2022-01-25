@@ -63,7 +63,7 @@ typedef struct s_ping {
     int					ttl;
     int					count;
     int					interval;
-    int					daddr;
+    unsigned int		daddr;
     int         		flags;
 } t_ping;
 

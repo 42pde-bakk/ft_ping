@@ -23,10 +23,10 @@ unsigned short checksum(void *b, int len, unsigned short csum) {
 }
 
 const char*	get_usage_string(void) {
-    static const char* usage_msg = "\
-Usage: ft_ping [-v verbose] [-h help] \
-[-q quiet] [-o onereply] \
-[-V version] destination";
+    static const char* usage_msg = \
+"Usage: ft_ping [-v verbose] [-h help]" \
+"[-q quiet] [-o onereply]" \
+"[-V version] destination";
 
 	return (usage_msg);
 }
