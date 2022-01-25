@@ -1,0 +1,6 @@
+.git
+cmake-build-debug
+ft_ping
+**/*.o
+Dockerfile
+docker-compose.yml
