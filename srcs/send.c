@@ -8,7 +8,7 @@ void	init_packet(t_ping* ping) {
     pckt->ip->version = IPVERSION;
     pckt->ip->ihl = sizeof(*ping->pckt.ip) >> 2;
 	pckt->ip->id = ping->pid;
-    pckt->ip->ttl = ping->ttl;
+    pckt->ip->ttl = TTL;
     pckt->ip->protocol = IPPROTO_ICMP;
 	pckt->ip->tot_len = sizeof(pckt->buf);
     if (inet_pton(AF_INET, ping->addrstr, &pckt->ip->daddr) == -1)
@@ -33,6 +33,7 @@ void send_packet(t_ping *ping, t_time *time)
 	save_current_time(&time->s);
 	if (ping->seq - 1 == 0) {
 		save_current_time(&time->time_start);
+		save_current_time(&time->r);
 	}
     g_signals.send = 0;
 }

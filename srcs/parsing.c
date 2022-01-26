@@ -20,7 +20,6 @@ int	obtain_addrinfo(t_ping* ping, const char* hostname) {
 }
 
 int	parse_flag(t_ping* ping, char flag) {
-	printf("flag=%c\n", flag);
 	switch (flag) {
 		case 'h':
 			exit_success(get_usage_string());

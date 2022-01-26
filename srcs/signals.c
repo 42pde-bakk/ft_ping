@@ -15,6 +15,7 @@ void    sigalarm_handler(int dummy) {
 void    sigint_handler(int dummy) {
     (void)dummy;
     g_signals.running = 0;
+    write(1, "\n", sizeof(char));
 }
 
 void    set_signal_handlers(void) {

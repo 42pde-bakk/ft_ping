@@ -25,24 +25,26 @@ static long double	get_mdev(t_time *t, unsigned int received) {
 }
 
 void	print_statistics(t_ping* ping, t_time* time) {
-	// struct timeval time_end;
-
-	// save_current_time(&time_end);
-	float packet_loss = (ping->seq - ping->received) / ping->seq * 100;
+	float packet_loss = (float)(ping->seq - ping->received) / (float)ping->seq * 100;
 
 	printf("--- %s ft_ping statistics ---\n", ping->host);
-	if (packet_loss < 0.01f || packet_loss > 99.99f)
-		printf("%d packets transmitted, %d received, %.0f%% packet loss, ", ping->seq, ping->received, packet_loss);
-	else
-		printf("%d packets transmitted, %d received, %.1f%% packet loss, ", ping->seq, ping->received, packet_loss);
+	printf("%d packets transmitted, ", ping->seq);
+	printf("%d received, ", ping->received);
+	if (ping->errors) {
+	    printf("+%d errors, ", ping->errors);
+	}
+    printf("%.*f%% packet loss, ", (packet_loss > 0.01f && packet_loss < 99.99f), packet_loss);
 	printf("time %u ms\n", timeval_difference(time->time_start, time->r));
 	t_time* t = time;
-	printf("rtt min/avg/max/mdev = %.3f/%.3f/%.3f/%.3Lf ms\n",
-		t->min,
-		(float)(t->sum / ping->received),
-		t->max,
-		get_mdev(time, ping->received)
-	);
+	float avg = t->sum / ping->received;
+	if (ping->received > 0) {
+        printf("rtt min/avg/max/mdev = %.3f/%.3f/%.3f/%.3Lf ms\n",
+               t->min,
+               (avg == avg) ? avg : 0.0f,
+               t->max,
+               get_mdev(time, ping->received)
+        );
+	}
 }
 
 static const char*	iphdr_format = \

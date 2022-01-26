@@ -6,18 +6,15 @@
 # define FT_PING_FT_PING_H
 # include <stdbool.h>
 # include <netdb.h>
-//# include <netinet/in.h>
 # include <netinet/ip.h>
 # include <netinet/ip_icmp.h>
 # include <netinet/icmp6.h>
 #include <sys/time.h>
 # define PACKET_SIZE 84
-# define USEC_TIMEOUT 50000
 # define TTL 64
-# define FLAG_o 1
-# define FLAG_q 2
-# define FLAG_v 4
-
+# define FLAG_o 1u
+# define FLAG_q 2u
+# define FLAG_v 4u
 
 
 typedef struct  s_signals {
@@ -60,11 +57,9 @@ typedef struct s_ping {
     int					sockfd;
     int					received;
     int                 errors;
-    int					ttl;
-    int					count;
     int					interval;
     unsigned int		daddr;
-    int         		flags;
+    unsigned int   		flags;
 } t_ping;
 
 // the one true global

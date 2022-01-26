@@ -41,12 +41,14 @@ void get_packet(t_ping *ping, t_time *time) {
 					bool csfailed = (sent_checksum != ping->pckt.hdr->checksum);
 					double rtt = calc_rtt(time);
 					display_receive_msg(ret, ping, rtt, csfailed);
-                    if (ping->flags & FLAG_o)
+                    if (ping->flags & FLAG_o) {
                         g_signals.running = 0;
-
+                    }
 				} else {
 					get_packet(ping, time);
 				}
+            } else {
+                ++ping->errors;
             }
 			if (ping->flags & FLAG_v) {
 				print_ip_icmp_packet(&ping->pckt);
