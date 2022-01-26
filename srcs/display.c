@@ -119,3 +119,23 @@ void	display_receive_msg(ssize_t ret, t_ping* ping, double rtt, bool csfailed) {
 		printf(" ((CHECKSUM FAILED))");
 	printf("\n");
 }
+
+static const char	*icmp_responses[] = {
+        [ICMP_DEST_UNREACH]		= "Destination Unreachable",
+        [ICMP_SOURCE_QUENCH]	= "Source Quench",
+        [ICMP_REDIRECT]			= "Redirect (change route)",
+        [ICMP_ECHO]				= "Echo Request",
+        [ICMP_TIME_EXCEEDED]	= "Time to live exceeded",
+        [ICMP_PARAMETERPROB]	= "Parameter Problem",
+        [ICMP_TIMESTAMP]		= "Timestamp Request",
+        [ICMP_TIMESTAMPREPLY]	= "Timestamp Reply",
+        [ICMP_INFO_REQUEST]		= "Information Request",
+        [ICMP_INFO_REPLY]		= "Information Reply",
+        [ICMP_ADDRESS]			= "Address Mask Request",
+        [ICMP_ADDRESSREPLY]		= "Address Mask Reply"
+};
+
+void    display_msg_wrongtype(t_ping* ping) {
+    unsigned int type = ping->pckt.hdr->type;
+    printf("From %s icmp_seq=%u %s\n", ping->addrstr, ping->seq - 1, icmp_responses[type]);
+}

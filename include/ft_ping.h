@@ -9,7 +9,8 @@
 # include <netinet/ip.h>
 # include <netinet/ip_icmp.h>
 # include <netinet/icmp6.h>
-#include <sys/time.h>
+# include <sys/time.h>
+# include <stdio.h>
 # define PACKET_SIZE 84
 # define TTL 64
 # define FLAG_o 1u
@@ -17,7 +18,6 @@
 # define FLAG_v 4u
 
 typedef struct  s_signals {
-
 	bool	send,
 			running,
 			sigquit;
@@ -74,8 +74,6 @@ unsigned int	timeval_difference(struct timeval start, struct timeval end);
 
 // signals.c
 void    set_signal_handlers(void);
-void    sigalarm_handler(int dummy);
-void    sigint_handler(int dummy);
 
 // parsing.c
 int	parse_argv(int argc, char** argv, t_ping* ping);
@@ -95,6 +93,7 @@ void	print_statistics(t_ping* ping, t_time* time);
 void	display_receive_msg(ssize_t ret, t_ping* ping, double rtt, bool csfailed);
 void    print_sigquit_statistics(t_ping* ping, t_time* time);
 void	print_ip_icmp_packet(t_pckt* pckt);
+void    display_msg_wrongtype(t_ping* ping);
 
 // utils.c
 unsigned short checksum(void *b, int len, unsigned short csum);
