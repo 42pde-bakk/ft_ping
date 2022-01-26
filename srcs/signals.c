@@ -27,5 +27,4 @@ void    set_signal_handlers(void) {
     signal(SIGINT, sigint_handler);
     signal(SIGALRM, sigalarm_handler);
     signal(SIGQUIT, sigquit_handler);
-    write(1, "\r", sizeof(char));
 }

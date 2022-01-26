@@ -33,7 +33,7 @@ void    print_sigquit_statistics(t_ping* ping, t_time* time) {
     double avg = (double)(time->sum / ping->received);
 
     g_signals.sigquit = 0;
-    if (avg != avg)
+    if (avg != avg) // NaN check
         avg = 0;
     printf("%d/%d packets, ", ping->received, ping->seq);
     printf("%.*f%% packet loss, ", (packet_loss > 0.01f && packet_loss < 99.99f), packet_loss);
@@ -55,7 +55,7 @@ void	print_statistics(t_ping* ping, t_time* time) {
 	if (ping->received > 0) {
         printf("rtt min/avg/max/mdev = %.3f/%.3f/%.3f/%.3Lf ms\n",
                time->min,
-               (avg == avg) ? avg : 0.0f,
+               (avg == avg) ? avg : 0.0f, // NaN check
                time->max,
                get_mdev(time, ping->received)
         );

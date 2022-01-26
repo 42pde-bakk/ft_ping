@@ -4,7 +4,6 @@
 
 #include <sys/time.h>
 #include "ft_ping.h"
-#include <stdio.h>
 
 void    save_current_time(struct timeval* timestamp) {
     if (gettimeofday(timestamp, NULL) == -1)
@@ -30,7 +29,6 @@ double calc_rtt(t_time* time)
     double rtt;
 
 	save_current_time(&time->r);
-
     rtt = (double)(time->r.tv_usec - time->s.tv_usec) / 1000000.0;
     rtt += (double)(time->r.tv_sec - time->s.tv_sec);
     rtt *= 1000.0;
