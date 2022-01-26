@@ -26,7 +26,6 @@ void	cleanup_ping(t_ping* ping) {
 	exit(EXIT_SUCCESS);
 }
 
-
 void    start_ping(t_ping* ping) {
 	t_time time;
 	ft_bzero(&time, sizeof(t_time));
@@ -37,6 +36,9 @@ void    start_ping(t_ping* ping) {
             send_packet(ping, &time);
 			alarm(ping->interval);
             get_packet(ping, &time);
+        }
+        if (g_signals.sigquit) {
+            print_sigquit_statistics(ping, &time);
         }
     }
 	print_statistics(ping, &time);

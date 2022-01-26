@@ -4,6 +4,7 @@
 
 #include <sys/time.h>
 #include "ft_ping.h"
+#include <stdio.h>
 
 void    save_current_time(struct timeval* timestamp) {
     if (gettimeofday(timestamp, NULL) == -1)
@@ -15,6 +16,13 @@ unsigned int	timeval_difference(struct timeval start, struct timeval end) {
 	int diff_useconds = end.tv_usec - start.tv_usec;
 
 	return diff_seconds * 1000 + (int)(diff_useconds / 1000);
+}
+
+double    calc_ewma(double old_ewma, double rtt, unsigned int nb) {
+    static float alpha = 0.5f;
+    if (nb == 0)
+        return (rtt);
+    return (alpha * rtt + (1.0f - alpha) * old_ewma);
 }
 
 double calc_rtt(t_time* time)

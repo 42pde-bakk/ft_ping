@@ -39,6 +39,7 @@ void get_packet(t_ping *ping, t_time *time) {
 					int sent_checksum = ping->pckt.hdr->checksum;
 					bool csfailed = (sent_checksum != ping->pckt.hdr->checksum);
 					double rtt = calc_rtt(time);
+					time->ewma = calc_ewma(time->ewma, rtt, ping->received - 1);
 					display_receive_msg(ret, ping, rtt, csfailed);
                     if (ping->flags & FLAG_o) {
                         g_signals.running = 0;
@@ -51,6 +52,9 @@ void get_packet(t_ping *ping, t_time *time) {
                 }
                 break;
             }
+        }
+        if (g_signals.sigquit) {
+            print_sigquit_statistics(ping, time);
         }
     }
 }

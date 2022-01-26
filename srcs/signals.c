@@ -4,7 +4,6 @@
 
 #include <signal.h>
 #include <unistd.h>
-#include <stdio.h>
 #include "ft_ping.h"
 
 void    sigalarm_handler(int dummy) {
@@ -18,7 +17,15 @@ void    sigint_handler(int dummy) {
     write(1, "\n", sizeof(char));
 }
 
+void    sigquit_handler(int dummy) {
+    (void)dummy;
+    g_signals.sigquit = 1;
+    write(1, "\r", sizeof(char));
+}
+
 void    set_signal_handlers(void) {
     signal(SIGINT, sigint_handler);
     signal(SIGALRM, sigalarm_handler);
+    signal(SIGQUIT, sigquit_handler);
+    write(1, "\r", sizeof(char));
 }

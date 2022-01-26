@@ -20,7 +20,8 @@
 typedef struct  s_signals {
 
 	bool	send,
-			running;
+			running,
+			sigquit;
 }               t_signals;
 
 typedef struct	s_pckt
@@ -45,6 +46,7 @@ typedef struct	s_time
     double		max;
     long double	sum;
     long double	sum_square;
+    double      ewma;
 }				t_time;
 
 typedef struct s_ping {
@@ -68,6 +70,7 @@ extern t_signals g_signals;
 // time.c
 void    save_current_time(struct timeval* timestamp);
 double	calc_rtt(t_time* time);
+double    calc_ewma(double old_ewma, double rtt, unsigned int nb);
 unsigned int	timeval_difference(struct timeval start, struct timeval end);
 
 // signals.c
@@ -91,7 +94,7 @@ void	get_packet(t_ping* ping, t_time* time);
 // display.c
 void	print_statistics(t_ping* ping, t_time* time);
 void	display_receive_msg(ssize_t ret, t_ping* ping, double rtt, bool csfailed);
-//void	print_ip_icmp_packet(void *packet);
+void    print_sigquit_statistics(t_ping* ping, t_time* time);
 void	print_ip_icmp_packet(t_pckt* pckt);
 
 // utils.c
