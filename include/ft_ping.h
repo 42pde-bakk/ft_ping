@@ -16,7 +16,6 @@
 # define FLAG_q 2u
 # define FLAG_v 4u
 
-
 typedef struct  s_signals {
 
 	bool	send,

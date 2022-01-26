@@ -34,7 +34,7 @@ int	parse_flag(t_ping* ping, char flag) {
 			ping->flags |= FLAG_v;
 			break ;
 		case 'V':
-			exit_success("ft_ping utility, peerutils-s20220119");
+			exit_success("ft_ping utility, peerutils-s20220126it");
 			break ;
 		default:
 			return (0);
