@@ -1,5 +1,5 @@
 NAME = ft_ping
-INCLUDE = -Iinclude -Ilibft/include
+INCLUDE = -Iinclude
 HEADER = include/ft_ping.h
 
 SRC_DIR = ./srcs
