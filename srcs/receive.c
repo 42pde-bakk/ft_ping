@@ -25,14 +25,13 @@ void get_packet(t_ping *ping, t_time *time) {
     ssize_t	ret = 0;
 
     init_header(&response, ping);
-    while (g_signals.running && ret <= 0)
+    while (g_signals.running)
     {
-
-		ret = recvmsg(ping->sockfd, &response.msg, MSG_DONTWAIT);
+		ret = recvmsg(ping->sockfd, &response.msg, response.msg.msg_flags);
         if (ret > 0)
         {
-            ping->received++;
             if (ping->pckt.hdr->type == ICMP_ECHOREPLY) {
+                ping->received++;
                 ping->pckt.hdr->checksum = 0;
                 ping->pckt.hdr->checksum = checksum((unsigned short*)ping->pckt.hdr, sizeof(struct icmphdr), 0);
                 if (ping->pckt.hdr->un.echo.id == ping->pid)
@@ -47,12 +46,11 @@ void get_packet(t_ping *ping, t_time *time) {
 				} else {
 					get_packet(ping, time);
 				}
-            } else {
-                ++ping->errors;
+                if (ping->flags & FLAG_v) {
+                    print_ip_icmp_packet(&ping->pckt);
+                }
+                break;
             }
-			if (ping->flags & FLAG_v) {
-				print_ip_icmp_packet(&ping->pckt);
-			}
         }
     }
 }
