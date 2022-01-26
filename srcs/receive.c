@@ -25,17 +25,15 @@ void get_packet(t_ping *ping, t_time *time) {
     ssize_t	ret = 0;
 
     init_header(&response, ping);
-    while (g_signals.running)
-    {
+    while (g_signals.running) {
 		ret = recvmsg(ping->sockfd, &response.msg, response.msg.msg_flags);
-        if (ret > 0)
-        {
+        if (ret > 0) {
             if (ping->pckt.hdr->type == ICMP_ECHOREPLY) {
-                ping->received++;
                 ping->pckt.hdr->checksum = 0;
                 ping->pckt.hdr->checksum = checksum((unsigned short*)ping->pckt.hdr, sizeof(struct icmphdr), 0);
                 if (ping->pckt.hdr->un.echo.id == ping->pid)
                 {
+                    ping->received++;
 					int sent_checksum = ping->pckt.hdr->checksum;
 					bool csfailed = (sent_checksum != ping->pckt.hdr->checksum);
 					double rtt = calc_rtt(time);
@@ -47,14 +45,18 @@ void get_packet(t_ping *ping, t_time *time) {
 				} else {
 					get_packet(ping, time);
 				}
-                if (ping->flags & FLAG_v) {
-                    print_ip_icmp_packet(&ping->pckt);
-                }
                 break;
+            } else if (ping->flags & FLAG_v) {
+                display_msg_wrongtype(ping);
             }
         }
         if (g_signals.sigquit) {
             print_sigquit_statistics(ping, time);
+        }
+        if (g_signals.send) {
+            printf("Request timeout for icmp_seq %u\n", ping->seq - 1);
+            // Doing this to replicate pings behaviour when pinging a valid non-functional IPv4 address
+            break;
         }
     }
 }
