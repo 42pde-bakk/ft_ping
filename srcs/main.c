@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include "ft_ping.h"
 #include <stdlib.h>
+#define ROOT_UID 0
 
 t_signals g_signals;
 
@@ -47,7 +48,7 @@ void    start_ping(t_ping* ping) {
 int main(int argc, char** argv) {
 	t_ping*	ping = init_ping();
 
-	if (getuid() != 0) {
+	if (getuid() != ROOT_UID) {
 		exit_error("Error. Must run program as root to be able to open raw sockets.");
 	}
 
@@ -60,6 +61,5 @@ int main(int argc, char** argv) {
 	ping->sockfd = create_socket();
     set_signal_handlers();
     start_ping(ping);
-
 	cleanup_ping(ping);
 }
